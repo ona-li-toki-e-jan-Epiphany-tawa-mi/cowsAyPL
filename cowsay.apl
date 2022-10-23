@@ -14,13 +14,17 @@
 ⍝ Author: ona li toki e jan Epiphany tawa mi.
 ⍝⍝
 
-⍝ \
-⍝  \
+EOFInterruptEvent←1005
+true←1
+
+
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 ⍝    ^__^
 ⍝    (oo)\_______
 ⍝    (__)\       )\/\
 ⍝        ||----w |
 ⍝        ||     ||
+⍝⍝
 cow←'\' ' \' '   ^__^' '   (oo)\_______' '   (__)\       )\/\' '       ||----w |' '       ||     ||'
 ⍝ Takes text on the right and a number on the left. The text is split into strings sized to that 
 ⍝ number. If there are insufficent characters to make the final string, spaces will be added.
@@ -30,7 +34,7 @@ splitText←{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}
 textBubbleize←{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}
 ⍝ Cowsay. Takes text on the left and a number on the left. The number is the maximum width of the 
 ⍝ text in the text bubble. 
-cowsay←{⍵{↑(⍵{⍵,⍨⍺/' '}¨cow),⍨textBubbleize ⍵ splitText ⍺}⍺⌊⍴⍵}
+cowsay←{⍵{↑(⍵{⍵,⍨⍺/' '}¨cow),⍨textBubbleize ⍵ splitText ⍺}⍺⌊≢⍵}
 ⍝ Oneliner version: {⍵{↑(⍵{⍵,⍨⍺/' '}¨'\' ' \' '   ^__^' '   (oo)\_______' '   (__)\       )\/\' '       ||----w |' '       ||     ||'),⍨{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}⍵{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}⍺}⍺⌊⍴⍵}
 
 
@@ -70,7 +74,18 @@ text←0⍴''
 
 
 
-text←⊃{⍺,' ',⍵}/text
+:If 0≢≢text
+    text←⊃{⍺,' ',⍵}/text
+:Else
+    ⍝ If no text is supplied via the arguments then it is pulled from stdin.
+    text←''
+    
+    :Trap EOFInterruptEvent
+        :While true
+            text←text,⍞
+        :EndWhile
+    :EndTrap
+:EndIf
 
 width←40
 :If ∨/userWidth←{'-W'≡⊃⍵}¨setOptionFlags
@@ -86,5 +101,7 @@ width←40
 :ElseIf setFlags∊⍨⊂'-n'
     width←≢text
 :EndIf
+
+
 
 ⎕←width cowsay text
