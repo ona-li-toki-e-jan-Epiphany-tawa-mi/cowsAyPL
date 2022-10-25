@@ -163,10 +163,14 @@ tounge←'  '
 ⍝⍝
 cow←'\' ' \' '   ^__^' ('   (',eyes,')\_______') '   (__)\       )\/\' ('    ',tounge,' ||----w |') '       ||     ||'
 ⍝ If the number of characters is smaller than the chosen width we only need to make a bubble with the same width as the text.
+textLength←≢text
 trueWidth←width⌊≢text
 ⍝ Splits text into trueWidth long character arrays, appending the required amount of spaces to the last one to achieve that length.
-splitText←trueWidth{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}text
+linesNeeded←⌈trueWidth÷⍨textLength
+⍝splitText←text{↓⍵⍴⍺,' '\⍨(×/⍵)-≢⍺}linesNeeded,trueWidth
+splitText←{⍵⍴text,' '\⍨(×/⍵)-textLength}linesNeeded,trueWidth
 ⍝ Produces a text bubble around the split text.
-textBubble←{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}splitText
+textBubble←'¯'⍪('|',' ','|',⍨splitText,' ')⍪'_'
+textBubble[1 (≢textBubble);1 (⊃¯1↑⍴textBubble)]←2 2⍴'/\\/'
 ⍝ Offsets cow to near the end of the bubble and prepends the text bubble.
-⎕←↑textBubble,{⍵,⍨trueWidth/' '}¨cow
+⎕←↑(↓textBubble),{⍵,⍨trueWidth/' '}¨cow
