@@ -37,22 +37,28 @@ setFlags←0⍴''
 text←0⍴''
 
 :If 0≢≢arguments
-    :If optionFlags∊⍨lastFlag←¯1↑arguments
+    notFlagArguments←~¯1⌽arguments∊optionFlags
+    ⍝ If a '--' is present and it is not a flag argument, that means that everything after that is not a flag, even if it starts
+    ⍝   with a '-'. This will filter to find any arguments before that string.
+    possibleFlagsMap←~×+\notFlagArguments∧{'--'≡⍵}¨arguments
+    possibleFlags←arguments/⍨possibleFlagsMap
+
+    :If optionFlags∊⍨lastFlag←¯1↑possibleFlags
         ⎕←'Error: option flag "',lastFlag,'" has no argument!'
         ⎕OFF
     :EndIf
 
     ⍝ Groups together option flags and their arguments in 2-length arrays. Text and non-option flags are enclosed in 1-length
-    ⍝   arrays.
-    enclosedFlags←{⍵⊂⍨~¯1⌽⍵∊optionFlags}arguments
+    ⍝   arrays. 
+    enclosedFlags←{⍵⊂⍨notFlagArguments⍴⍨≢⍵}possibleFlags
     ⍝ Separates out option flags.
     setOptionFlags←{⍵/⍨2=≢¨⍵}enclosedFlags ⋄ enclosedFlags←enclosedFlags~setOptionFlags
     ⍝ Unencloses remaining flags from their 1-length container.
     enclosedFlags←⊃¨enclosedFlags
     ⍝ Separates out non-option flags. 
     setFlags←{⍵/⍨flags∊⍨⍵}enclosedFlags ⋄ enclosedFlags←enclosedFlags~setFlags
-    ⍝ Remaining is *probably* text.
-    text←enclosedFlags
+    ⍝ Remaining is text and can be prepended to the arguments ruled as not being flags due to '--'.
+    text←enclosedFlags,(⊂'--')~⍨arguments/⍨~possibleFlagsMap
 :EndIf
 
 ⍝ Takes a flag (i.e. '-n') and returns whether that flag has been set.
@@ -167,7 +173,6 @@ textLength←≢text
 trueWidth←width⌊≢text
 ⍝ Splits text into trueWidth long character arrays, appending the required amount of spaces to the last one to achieve that length.
 linesNeeded←⌈trueWidth÷⍨textLength
-⍝splitText←text{↓⍵⍴⍺,' '\⍨(×/⍵)-≢⍺}linesNeeded,trueWidth
 splitText←{⍵⍴text,' '\⍨(×/⍵)-textLength}linesNeeded,trueWidth
 ⍝ Produces a text bubble around the split text.
 textBubble←'¯'⍪('|',' ','|',⍨splitText,' ')⍪'_'
