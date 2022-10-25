@@ -56,7 +56,7 @@ text←0⍴''
 :EndIf
 
 ⍝ Takes a flag (i.e. '-n') and returns whether that flag has been set.
-isFlagSet←{setFlags∊⍨⊃⍵}
+isFlagSet←{setFlags∊⍨⊂⍵}
 ⍝ Takes an option flag (i.e. '-W') and returns a 2-length array. The first element is a 0 if the flag is not set, else 1. The 
 ⍝   second element contains the argument of the flag, or an empty character array if not set.
 getOptionFlag←{
@@ -66,20 +66,6 @@ getOptionFlag←{
 }
 
 
-
-⍝ Text coagulation.
-:If 0≢≢text
-    text←⊃{⍺,' ',⍵}/text
-:Else
-    ⍝ If no text is supplied via the arguments then it is pulled from stdin.
-    text←''
-    
-    :Trap EOFInterruptEvent inputInterruptEvent
-        :While true
-            text←text,⍞
-        :EndWhile
-    :EndTrap
-:EndIf
 
 ⍝ Changing the width of the text bubble.
 width←40
@@ -152,6 +138,20 @@ tounge←'  '
     tounge←userTounge
 :EndIf
 
+⍝ Text coagulation.
+:If 0≢≢text
+    text←⊃{⍺,' ',⍵}/text
+:Else
+    ⍝ If no text is supplied via the arguments then it is pulled from stdin.
+    text←''
+    
+    :Trap EOFInterruptEvent inputInterruptEvent
+        :While true
+            text←text,⍞
+        :EndWhile
+    :EndTrap
+:EndIf
+
 
 
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
@@ -162,14 +162,11 @@ tounge←'  '
 ⍝        ||     ||
 ⍝⍝
 cow←'\' ' \' '   ^__^' ('   (',eyes,')\_______') '   (__)\       )\/\' ('    ',tounge,' ||----w |') '       ||     ||'
-⍝ Takes text on the right and a number on the left. The text is split into strings sized to that 
-⍝   number. If there are insufficent characters to make the final string, spaces will be added.
-splitText←{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}
-⍝ Takes an array of strings and places a text bubble border around them. The strings must be of the 
-⍝   same length for it to be displayed correctly, which can be achieved with splitText.  
-textBubbleize←{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}
-⍝ Cowsay. Takes text on the left and a number on the left. The number is the maximum width of the 
-⍝   text in the text bubble. 
-cowsay←{⍵{↑(⍵{⍵,⍨⍺/' '}¨cow),⍨textBubbleize ⍵ splitText ⍺}⍺⌊≢⍵}
-
-⎕←width cowsay text
+⍝ If the number of characters is smaller than the chosen width we only need to make a bubble with the same width as the text.
+trueWidth←width⌊≢text
+⍝ Splits text into trueWidth long character arrays, appending the required amount of spaces to the last one to achieve that length.
+splitText←trueWidth{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}text
+⍝ Produces a text bubble around the split text.
+textBubble←{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}splitText
+⍝ Offsets cow to near the end of the bubble and prepends the text bubble.
+⎕←↑textBubble,{⍵,⍨trueWidth/' '}¨cow
