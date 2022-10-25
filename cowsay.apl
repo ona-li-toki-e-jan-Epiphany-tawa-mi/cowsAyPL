@@ -15,27 +15,9 @@
 ⍝⍝
 
 EOFInterruptEvent←1005
+inputInterruptEvent←1004
+
 true←1
-
-
-⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
-⍝    ^__^
-⍝    (oo)\_______
-⍝    (__)\       )\/\
-⍝        ||----w |
-⍝        ||     ||
-⍝⍝
-cow←'\' ' \' '   ^__^' '   (oo)\_______' '   (__)\       )\/\' '       ||----w |' '       ||     ||'
-⍝ Takes text on the right and a number on the left. The text is split into strings sized to that 
-⍝ number. If there are insufficent characters to make the final string, spaces will be added.
-splitText←{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}
-⍝ Takes an array of strings and places a text bubble border around them. The strings must be of the 
-⍝ same length for it to be displayed correctly, which can be achieved with splitText.  
-textBubbleize←{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}
-⍝ Cowsay. Takes text on the left and a number on the left. The number is the maximum width of the 
-⍝ text in the text bubble. 
-cowsay←{⍵{↑(⍵{⍵,⍨⍺/' '}¨cow),⍨textBubbleize ⍵ splitText ⍺}⍺⌊≢⍵}
-⍝ Oneliner version: {⍵{↑(⍵{⍵,⍨⍺/' '}¨'\' ' \' '   ^__^' '   (oo)\_______' '   (__)\       )\/\' '       ||----w |' '       ||     ||'),⍨{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}⍵{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}⍺}⍺⌊⍴⍵}
 
 
 
@@ -45,7 +27,7 @@ cowsay←{⍵{↑(⍵{⍵,⍨⍺/' '}¨cow),⍨textBubbleize ⍵ splitText ⍺}�
 ⍝ Option flags and their default arguments when not specified (e.x. "-W 25".)
 optionFlags←⊂'-W'
 ⍝ Non-option flags, switches, whatever (e.x. "-n" "-d".)
-flags←⊂'-n'
+flags←'-n' '-b' '-d' '-g' '-p' '-s' '-t' '-w' '-y'
 
 ⍝ We drop the first argument as that is the name of the program.
 arguments←1↓2⎕NQ#'GetCommandLineArgs'
@@ -72,24 +54,37 @@ text←0⍴''
     setFlags←⊃¨setFlags
 :EndIf
 
+⍝ Takes a flag (i.e. '-n') and returns whether that flag has been set.
+isFlagSet←{setFlags∊⍨⊂⍵}
+⍝ Takes an argumented flag (i.e. '-W') and returns a 2-length array. The first element is a 0 if the flag is not set, else 1. The 
+⍝   second element contains the argument of the flag, or an empty character array if not set.
+getArgumentedFlag←{
+    _flag←⍵
+    _flagMap←{_flag≡⊃⍵}¨setOptionFlags
+    (∨/_flagMap),¯1↑⊃_flagMap/setOptionFlags
+}
 
 
+
+⍝ Text coagulation.
 :If 0≢≢text
     text←⊃{⍺,' ',⍵}/text
 :Else
     ⍝ If no text is supplied via the arguments then it is pulled from stdin.
     text←''
     
-    :Trap EOFInterruptEvent
+    :Trap EOFInterruptEvent inputInterruptEvent
         :While true
             text←text,⍞
         :EndWhile
     :EndTrap
 :EndIf
 
+⍝ Chaning the width of the text bubble.
 width←40
-:If ∨/userWidth←{'-W'≡⊃⍵}¨setOptionFlags
-    userWidth←⊃¯1↑⊃userWidth/setOptionFlags
+
+:If ⊃userWidth←getArgumentedFlag '-W'
+    userWidth←⊃¯1↑userWidth
     width←⎕VFI userWidth
 
     :If 0=⊃width
@@ -98,10 +93,60 @@ width←40
     :EndIf
 
     width←⊃¯1↑width
-:ElseIf setFlags∊⍨⊂'-n'
+:ElseIf isFlagSet '-n'
     width←≢text
 :EndIf
 
+⍝ Changing the cow's appearance.
+eyes←'oo'
+tounge←'  '
 
+:If isFlagSet '-b'
+    ⍝ Borg mode.
+    eyes←'=='
+:ElseIf isFlagSet '-d'
+    ⍝ Dead.
+    eyes←'XX'
+    tounge←'U '
+:ElseIf isFlagSet '-g'
+    ⍝ Greedy.
+    eyes←'$$'
+:ElseIf isFlagSet '-p'
+    ⍝ Paranoid.
+    eyes←'@@'
+:ElseIf isFlagSet '-s'
+    ⍝ Stoned.
+    eyes←'**'
+    tounge←'U '
+:ElseIf isFlagSet '-t'
+    ⍝ Tired.
+    eyes←'--'
+:ElseIf isFlagSet '-w'
+    ⍝ Wired.
+    eyes←'00'
+:ElseIf isFlagSet '-y'
+    ⍝ Young.
+    eyes←'..'
+:EndIf
+
+
+
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+⍝    ^__^
+⍝    (oo)\_______
+⍝    (__)\       )\/\
+⍝        ||----w |
+⍝        ||     ||
+⍝⍝
+cow←'\' ' \' '   ^__^' ('   (',eyes,')\_______') '   (__)\       )\/\' ('    ',tounge,' ||----w |') '       ||     ||'
+⍝ Takes text on the right and a number on the left. The text is split into strings sized to that 
+⍝   number. If there are insufficent characters to make the final string, spaces will be added.
+splitText←{⍵{↓⍵⍴⍺,' '\⍨(×/⍵)-⍴⍺}(⌈⍺÷⍨⍴⍵),⍺}
+⍝ Takes an array of strings and places a text bubble border around them. The strings must be of the 
+⍝   same length for it to be displayed correctly, which can be achieved with splitText.  
+textBubbleize←{⍵{⍵{(⊂'/¯','¯\',⍨⍵/'¯'),(⊂'\_','_/',⍨⍵/'_'),⍨⍺}⍴⊃⍺}{'| ',⍵,' |'}¨⍵}
+⍝ Cowsay. Takes text on the left and a number on the left. The number is the maximum width of the 
+⍝   text in the text bubble. 
+cowsay←{⍵{↑(⍵{⍵,⍨⍺/' '}¨cow),⍨textBubbleize ⍵ splitText ⍺}⍺⌊≢⍵}
 
 ⎕←width cowsay text
