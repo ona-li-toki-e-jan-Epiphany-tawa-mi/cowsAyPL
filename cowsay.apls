@@ -14,9 +14,8 @@
 ⍝ Author: ona li toki e jan Epiphany tawa mi.
 ⍝⍝
 
+⍝ Constants.
 EOFInterruptEvent←1005
-inputInterruptEvent←1004
-
 true←1
 
 
@@ -27,10 +26,11 @@ true←1
 ⍝ Option flags (e.x. "-W 25".)
 optionFlags←'-W' '-e' '-T'
 ⍝ Non-option flags, switches, whatever (e.x. "-n" "-d".)
-flags←'-n' '-b' '-d' '-g' '-p' '-s' '-t' '-w' '-y'
+flags←'-n' '-b' '-d' '-g' '-p' '-s' '-t' '-w' '-y' '-h' '--help'
 
-⍝ We drop the first argument as that is the name of the program.
-arguments←1↓2⎕NQ#'GetCommandLineArgs'
+arguments←2⎕NQ#'GetCommandLineArgs'
+programName←⊃arguments
+arguments←1↓arguments
 
 setOptionFlags←0⍴''
 setFlags←0⍴''
@@ -70,6 +70,118 @@ getOptionFlag←{
     _flagMap←{_flag≡⊃⍵}¨setOptionFlags
     (∨/_flagMap),¯1↑⊃_flagMap/setOptionFlags
 }
+
+
+
+:If ∨/isFlagSet¨'-h' '--help'
+    ⍝ Lines should be outputted with a maximum length of 80 characters.
+    tab←'        '
+
+
+    ⎕←'NAME:'
+    ⎕←tab,programName,' - cowsay written in Dyalog APL.'
+    
+    ⎕←''
+    ⎕←'SYNOPSIS:'
+    ⎕←tab,programName,' [-bdgpstwy] [-h] [-e EYES] [-T TOUNGE]'
+    ⎕←tab,(' '/⍨≢programName),' [-n|-W WIDTH] [TEXT...]'
+    
+    ⎕←''
+    ⎕←'DESCRIPTION:'
+    ⎕←tab,'Prints out ASCII art of a cow saying the supplied text within a speech' 
+    ⎕←tab,'bubble. If no text is supplied as arguments to the function, it will'
+    ⎕←tab,'instead be pulled from STDIN until an EOF is reached.'
+    ⎕←''
+    ⎕←tab,'The maximum width of the text bubble defaults to 40. If any lines of' 
+    ⎕←tab,'text supplied exceed that length, they will be word-wrapped. If the max'
+    ⎕←tab,'line size is smaller than the max width, the max line size will be used'
+    ⎕←tab,'for the size of the text bubble. The max width can be set with -W WIDTH,'
+    ⎕←tab,'or word-wrapping can be disabled completely using -n.'
+    ⎕←''
+    ⎕←tab,'The cow''s appearance can either be set to a preset (using any of'
+    ⎕←tab,'-bdgpstwy) or custom set using -e EYES and/or -T TOUNGE.'
+
+    ⎕←''
+    ⎕←'COMMAND LINE OPTIONS:'
+    ⎕←tab,'-h, --help'
+    ⎕←tab,tab,'Displays this help message and exits.'
+    ⎕←''
+    ⎕←tab,'-W WIDTH'
+    ⎕←tab,tab,'Integer. Sets the maximum WIDTH of lines within the'
+    ⎕←tab,tab,'generated text bubbles. Incompatible with -n.'
+    ⎕←''
+    ⎕←tab,'-n'
+    ⎕←tab,tab,'Prevents word wrapping. Width of the text bubble is the'
+    ⎕←tab,tab,'length of the largest line from TEXT. Incompatible with -W'
+    ⎕←tab,tab,'WIDTH.'
+    ⎕←''
+    ⎕←tab,'-e EYES'
+    ⎕←tab,tab,'Sets the string for the EYES, must be 2 characters long.' 
+    ⎕←tab,tab,'Incompatible with appearance presets.'
+    ⎕←''
+    ⎕←tab,'-T TOUNGE'
+    ⎕←tab,tab,'Sets the string for the TOUNGE, must be either 1 or 2'
+    ⎕←tab,tab,'characters long. If only 1 character is supplied a space'
+    ⎕←tab,tab,'will be appended to it. Incompatible with a few appearance'
+    ⎕←tab,tab,'presets.'
+    ⎕←''
+    ⎕←tab,'-b'
+    ⎕←tab,tab,'Borg mode. Appearance preset. Incompatible with -e EYES and' 
+    ⎕←tab,tab,'other presets.'
+    ⎕←''
+    ⎕←tab,'-d'
+    ⎕←tab,tab,'Dead. Appearance preset. Incompatible with -e EYES, -T'
+    ⎕←tab,tab,'TOUNGE, and other presets.'
+    ⎕←''
+    ⎕←tab,'-g'
+    ⎕←tab,tab,'Greedy. Appearance preset. Incompatible with -e EYES and'
+    ⎕←tab,tab,'other presets.'
+    ⎕←''
+    ⎕←tab,'-p'
+    ⎕←tab,tab,'Paranoid. Appearance preset. Incompatible with -e EYES and'
+    ⎕←tab,tab,'other presets.'
+    ⎕←''
+    ⎕←tab,'-s'
+    ⎕←tab,tab,'Stoned. Appearance preset. Incompatible with -e EYES, -T'
+    ⎕←tab,tab,'TOUNGE, and other presets.'
+    ⎕←''
+    ⎕←tab,'-t'
+    ⎕←tab,tab,'Tired. Appearance preset. Incompatible with -e EYES and'
+    ⎕←tab,tab,'other presets.'
+    ⎕←''
+    ⎕←tab,'-w'
+    ⎕←tab,tab,'Wired. Appearance preset. Incompatible with -e EYES and'
+    ⎕←tab,tab,'other presets.'
+    ⎕←''
+    ⎕←tab,'-y'
+    ⎕←tab,tab,'Young. Appearance preset. Incompatible with -e EYES and'
+    ⎕←tab,tab,'other presets.'
+
+    ⎕←''
+    ⎕←'AUTHOR(S):'
+    ⎕←tab,'ona li toki e jan Epiphany tawa mi.'
+
+    ⎕←''
+    ⎕←'BUGS:
+    ⎕←tab,'Report bugs to <https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/co'
+    ⎕←tab,'wsAyPL/issues>'
+
+    ⎕←''
+    ⎕←'COPYRIGHT:'
+    ⎕←tab,'Copyright © 2022 ona-li-toki-e-jan-Epiphany-tawa-mi. License: MIT. This'
+    ⎕←tab,'is free software; you are free to modify and redistribute it. See the'
+    ⎕←tab,'source or visit <https://mit-license.org> for the full terms of the'
+    ⎕←tab,'license. THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY'
+    ⎕←tab,'KIND.'
+
+    ⎕←''
+    ⎕←'SEE ALSO:'
+    ⎕←tab,'Source code avalible at <https://github.com/ona-li-toki-e-jan-Epiphany-t'
+    ⎕←tab,'awa-mi/cowsAyPL>'
+
+
+    ⎕OFF
+:EndIf
 
 
 
@@ -150,7 +262,7 @@ tounge←'  '
     text←{⍺,' ',⍵}/text
 :Else
     ⍝ If no text is supplied via the arguments then it is pulled from stdin.
-    :Trap EOFInterruptEvent inputInterruptEvent
+    :Trap EOFInterruptEvent
         text←⊂⍞
         :While true
             text←text,⊂⍞
