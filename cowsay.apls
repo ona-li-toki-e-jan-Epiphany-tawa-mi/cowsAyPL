@@ -173,10 +173,11 @@ trueWidth←⌈/≢¨text
     ⍝   be properly wrapped.
     trueWidth←width⌊trueWidth
 :EndIf
-)copy display
+
 cow←'\' ' \' '   ^__^' ('   (',eyes,')\_______') '   (__)\       )\/\' ('    ',tounge,' ||----w |') '       ||     ||'
-⍝ Splits text into trueWidth-long character arrays, padding with spaces where necessary.
-splitText←⊃,/trueWidth{⍵{↓⍵⍴⍺,' '/⍨(×/⍵)-≢⍺}⍺,⍨⌈⍺÷⍨≢⍵}¨text
+⍝ Splits text into trueWidth-long character arrays, padding with spaces where necessary. Empty lines are 
+⍝   populated with spaces.
+splitText←⊃,/trueWidth{⍵{↓⍵⍴⍺,' '/⍨(×/⍵)-≢⍺}⍺,⍨(0≡≢⍵)+⌈⍺÷⍨≢⍵}¨text
 ⍝ Produces a text bubble around the split text.
 textBubble←(2+trueWidth){(⊂'/','\',⍨⍺/'¯'),⍵,⊂'\','/',⍨⍺/'_'}{'| ',⍵,' |'}¨splitText
 ⍝ Offsets cow to near the end of the bubble and prepends the text bubble.
