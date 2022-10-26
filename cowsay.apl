@@ -73,7 +73,7 @@ getOptionFlag←{
 
 
 
-⍝ Changing the width of the text bubble.
+⍝ Changing the maximum width of the text bubble.
 width←40
 
 :If ⊃userWidth←getOptionFlag '-W'
@@ -85,9 +85,10 @@ width←40
         ⎕OFF
     :EndIf
 
-    width←⊃¯1↑width
+    width←⊃⊃¯1↑width
 :ElseIf isFlagSet '-n'
-    width←≢text
+    ⍝ ¯1 means no word wrapping.
+    width←¯1
 :EndIf
 
 ⍝ Changing the cow's appearance.
@@ -146,14 +147,13 @@ tounge←'  '
 
 ⍝ Text coagulation.
 :If 0≢≢text
-    text←⊃{⍺,' ',⍵}/text
+    text←{⍺,' ',⍵}/text
 :Else
     ⍝ If no text is supplied via the arguments then it is pulled from stdin.
-    text←''
-    
     :Trap EOFInterruptEvent inputInterruptEvent
+        text←⊂⍞
         :While true
-            text←text,⍞
+            text←text,⊂⍞
         :EndWhile
     :EndTrap
 :EndIf
@@ -167,15 +167,17 @@ tounge←'  '
 ⍝        ||----w |
 ⍝        ||     ||
 ⍝⍝
+trueWidth←⌈/≢¨text
+:If ¯1≢width
+    ⍝ If -n is not set the width of the text may need to be set to the word wrap limit if a line's length is larger so that it will
+    ⍝   be properly wrapped.
+    trueWidth←width⌊trueWidth
+:EndIf
+)copy display
 cow←'\' ' \' '   ^__^' ('   (',eyes,')\_______') '   (__)\       )\/\' ('    ',tounge,' ||----w |') '       ||     ||'
-⍝ If the number of characters is smaller than the chosen width we only need to make a bubble with the same width as the text.
-textLength←≢text
-trueWidth←width⌊≢text
-⍝ Splits text into trueWidth long character arrays, appending the required amount of spaces to the last one to achieve that length.
-linesNeeded←⌈trueWidth÷⍨textLength
-splitText←{⍵⍴text,' '\⍨(×/⍵)-textLength}linesNeeded,trueWidth
+⍝ Splits text into trueWidth-long character arrays, padding with spaces where necessary.
+splitText←⊃,/trueWidth{⍵{↓⍵⍴⍺,' '/⍨(×/⍵)-≢⍺}⍺,⍨⌈⍺÷⍨≢⍵}¨text
 ⍝ Produces a text bubble around the split text.
-textBubble←'¯'⍪('|',' ','|',⍨splitText,' ')⍪'_'
-textBubble[1 (≢textBubble);1 (⊃¯1↑⍴textBubble)]←2 2⍴'/\\/'
+textBubble←(2+trueWidth){(⊂'/','\',⍨⍺/'¯'),⍵,⊂'\','/',⍨⍺/'_'}{'| ',⍵,' |'}¨splitText
 ⍝ Offsets cow to near the end of the bubble and prepends the text bubble.
-⎕←↑(↓textBubble),{⍵,⍨trueWidth/' '}¨cow
+⎕←↑textBubble,{⍵,⍨trueWidth/' '}¨cow
