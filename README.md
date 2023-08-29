@@ -50,8 +50,8 @@
 | Execute either of the following command(s) in the project di |               
 | rectory to get started:                                      |               
 |                                                              |               
-| dyalogscript cowsay.apls -h                                  |               
-| ./cowsay.apls -h                                             |               
+| dyalogscript cowsay.apl -h                                   |               
+| ./cowsay.apl -h                                              |               
 \______________________________________________________________/               
                                                             \                  
                                                              \                 
