@@ -1,16 +1,40 @@
-#!/usr/bin/env dyalogscript
+ #!/usr/bin/env dyalogscript
+
+⍝ MIT License
+⍝
+⍝ Copyright (c) 2022 ona-li-toki-e-jan-Epiphany-tawa-mi
+⍝
+⍝ Permission is hereby granted, free of charge, to any person obtaining a copy
+⍝ of this software and associated documentation files (the "Software"), to deal
+⍝ in the Software without restriction, including without limitation the rights
+⍝ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+⍝ copies of the Software, and to permit persons to whom the Software is
+⍝ furnished to do so, subject to the following conditions:
+⍝
+⍝ The above copyright notice and this permission notice shall be included in all
+⍝ copies or substantial portions of the Software.
+⍝
+⍝ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+⍝ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+⍝ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+⍝ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+⍝ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+⍝ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+⍝ SOFTWARE.
+
+
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
-⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\               
-⍝ | Cowsay in Dyalog APL. |               
-⍝ \_______________________/               
-⍝                      \                  
-⍝                       \                 
-⍝                         ^__^            
-⍝                         (oo)\_______    
+⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
+⍝ | Cowsay in Dyalog APL. |
+⍝ \_______________________/
+⍝                      \
+⍝                       \
+⍝                         ^__^
+⍝                         (oo)\_______
 ⍝                         (__)\       )\/\
-⍝                             ||----w |   
+⍝                             ||----w |
 ⍝                             ||     ||
-⍝ 
+⍝
 ⍝ Author: ona li toki e jan Epiphany tawa mi.
 ⍝⍝
 
@@ -49,13 +73,13 @@ text←0⍴''
     :EndIf
 
     ⍝ Groups together option flags and their arguments in 2-length arrays. Text and non-option flags are enclosed in 1-length
-    ⍝   arrays. 
+    ⍝   arrays.
     enclosedFlags←{⍵⊂⍨notFlagArguments⍴⍨≢⍵}possibleFlags
     ⍝ Separates out option flags.
     setOptionFlags←{⍵/⍨2=≢¨⍵}enclosedFlags ⋄ enclosedFlags←enclosedFlags~setOptionFlags
     ⍝ Unencloses remaining flags from their 1-length container.
     enclosedFlags←⊃¨enclosedFlags
-    ⍝ Separates out non-option flags. 
+    ⍝ Separates out non-option flags.
     setFlags←{⍵/⍨flags∊⍨⍵}enclosedFlags ⋄ enclosedFlags←enclosedFlags~setFlags
     ⍝ Remaining is text and can be prepended to the arguments ruled as not being flags due to '--'.
     text←enclosedFlags,(⊂'--')~⍨arguments/⍨~possibleFlagsMap
@@ -63,7 +87,7 @@ text←0⍴''
 
 ⍝ Takes a flag (i.e. '-n') and returns whether that flag has been set.
 isFlagSet←{setFlags∊⍨⊂⍵}
-⍝ Takes an option flag (i.e. '-W') and returns a 2-length array. The first element is a 0 if the flag is not set, else 1. The 
+⍝ Takes an option flag (i.e. '-W') and returns a 2-length array. The first element is a 0 if the flag is not set, else 1. The
 ⍝   second element contains the argument of the flag, or an empty character array if not set.
 getOptionFlag←{
     _flag←⍵
@@ -80,19 +104,19 @@ getOptionFlag←{
 
     ⎕←'NAME:'
     ⎕←tab,programName,' - cowsay written in Dyalog APL.'
-    
+
     ⎕←''
     ⎕←'SYNOPSIS:'
     ⎕←tab,programName,' [-bdgpstwy] [-h] [-e EYES] [-T TOUNGE]'
     ⎕←tab,(' '/⍨≢programName),' [-n|-W WIDTH] [TEXT...]'
-    
+
     ⎕←''
     ⎕←'DESCRIPTION:'
-    ⎕←tab,'Prints out ASCII art of a cow saying the supplied text within a speech' 
+    ⎕←tab,'Prints out ASCII art of a cow saying the supplied text within a speech'
     ⎕←tab,'bubble. If no text is supplied as arguments to the function, it will'
     ⎕←tab,'instead be pulled from STDIN until an EOF is reached.'
     ⎕←''
-    ⎕←tab,'The maximum width of the text bubble defaults to 40. If any lines of' 
+    ⎕←tab,'The maximum width of the text bubble defaults to 40. If any lines of'
     ⎕←tab,'text supplied exceed that length, they will be word-wrapped. If the max'
     ⎕←tab,'line size is smaller than the max width, the max line size will be used'
     ⎕←tab,'for the size of the text bubble. The max width can be set with -W WIDTH,'
@@ -116,7 +140,7 @@ getOptionFlag←{
     ⎕←tab,tab,'WIDTH.'
     ⎕←''
     ⎕←tab,'-e EYES'
-    ⎕←tab,tab,'Sets the string for the EYES, must be 2 characters long.' 
+    ⎕←tab,tab,'Sets the string for the EYES, must be 2 characters long.'
     ⎕←tab,tab,'Incompatible with appearance presets.'
     ⎕←''
     ⎕←tab,'-T TOUNGE'
@@ -126,7 +150,7 @@ getOptionFlag←{
     ⎕←tab,tab,'presets.'
     ⎕←''
     ⎕←tab,'-b'
-    ⎕←tab,tab,'Borg mode. Appearance preset. Incompatible with -e EYES and' 
+    ⎕←tab,tab,'Borg mode. Appearance preset. Incompatible with -e EYES and'
     ⎕←tab,tab,'other presets.'
     ⎕←''
     ⎕←tab,'-d'
@@ -287,7 +311,7 @@ trueWidth←⌈/≢¨text
 :EndIf
 
 cow←'\' ' \' '   ^__^' ('   (',eyes,')\_______') '   (__)\       )\/\' ('    ',tounge,' ||----w |') '       ||     ||'
-⍝ Splits text into trueWidth-long character arrays, padding with spaces where necessary. Empty lines are 
+⍝ Splits text into trueWidth-long character arrays, padding with spaces where necessary. Empty lines are
 ⍝   populated with spaces.
 splitText←⊃,/trueWidth{⍵{↓⍵⍴⍺,' '/⍨(×/⍵)-≢⍺}⍺,⍨(0≡≢⍵)+⌈⍺÷⍨≢⍵}¨text
 ⍝ Produces a text bubble around the split text.
