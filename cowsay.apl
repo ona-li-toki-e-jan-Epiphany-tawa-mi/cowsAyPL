@@ -39,6 +39,11 @@
 
 
 
+⍝ Partitions a vector ⍵, splitting it, where the given value ⍺ is present, into
+⍝ a vector of vectors. The split value will not be present in the resulting
+⍝ subvectors.
+PARTITION_VOV←{⍺{⍵~⍺}¨⍵⊂⍨1++\⍺⍷⍵}
+
 ⍝ Matches a singular integer, with or without a minus sign, with any number of
 ⍝ leading or trailing spaces.
 RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
@@ -64,16 +69,20 @@ FIO_FREAD←6
 ⍝ ⎕FIO function. Checks the end-of-file flag of the handle, returning non-zero
 ⍝ if it is set.
 FIO_FEOF←10
+⍝ The numerical value of a line feed character.
+FIO_LINE_FEED←10
 
+⍝ TODO see if unicode characters can be added together to make ⎕UCS convert them
+⍝ properly.
 ⍝ Reads input from stdin until EOF is reached and outputs the contents as a
-⍝ character vector.
-∇CVECTOR←STDIN
-  CVECTOR←⍬
+⍝ vector of character vectors, each vector representing a line.
+∇CCVECTOR←STDIN
+  CCVECTOR←⍬
   L_READ_LOOP:
-    CVECTOR←CVECTOR,(⎕FIO[FIO_FREAD] FIO_STDIN)
+    CCVECTOR←CCVECTOR,(⎕FIO[FIO_FREAD] FIO_STDIN)
     →(0≢(⎕FIO[FIO_FEOF] FIO_STDIN)) ↓ L_READ_LOOP L_EOF
   L_EOF:
-  CVECTOR←⎕UCS CVECTOR
+  CCVECTOR←⎕UCS¨ FIO_LINE_FEED PARTITION_VOV CCVECTOR
 ∇
 
 
@@ -86,11 +95,11 @@ FIO_FEOF←10
 ⍝ because of it outputting help information, an error with the input, or some
 ⍝ other reason.
 PARSE_EXIT_PROGRAM←0
-⍝ The maximum width of the text bubble. Any text over the limit will be
+⍝ The maximum width of the text in the text bubble. Any text over the limit will be
 ⍝ word-wrapped. May be ≤ 0.
-BUBBLE_WIDTH←40
+TEXT_WIDTH←40
 ⍝ Whether to disable word wrapping. If set, the width of the bubble should be
-⍝ that of the longest line, and BUBBLE_WIDTH should be ignored.
+⍝ that of the longest line, and TEXT_WIDTH should be ignored.
 DISABLE_WORD_WRAP←0
 ⍝ When the text to display is specified in the arguments of the command, it will
 ⍝ be put into this variable. The non-empty value will be a vector of character
@@ -117,7 +126,7 @@ TOUNGE←"  "
       →L_WHILE
     L_PARSE_NORMALLY:
 
-    →({ARGUMENT≡⍵}¨"+h" "+v" "+W" "++" "+n" "+e" "+T" "+b" "+d" "+g" "+p" "+s" "+t" "+w" "+y") / L_HELP L_VERSION L_SET_BUBBLE_WIDTH L_DOUBLE_PLUS L_DISABLE_WORD_WRAP L_SET_EYES L_SET_TOUNGE L_SET_BORG_MODE L_SET_DEAD L_SET_GREEDY L_SET_PARANOID L_SET_STONED L_SET_TIRED L_SET_WIRED L_SET_YOUTHFUL
+    →({ARGUMENT≡⍵}¨"+h" "+v" "+W" "++" "+n" "+e" "+T" "+b" "+d" "+g" "+p" "+s" "+t" "+w" "+y") / L_HELP L_VERSION L_SET_TEXT_WIDTH L_DOUBLE_PLUS L_DISABLE_WORD_WRAP L_SET_EYES L_SET_TOUNGE L_SET_BORG_MODE L_SET_DEAD L_SET_GREEDY L_SET_PARANOID L_SET_STONED L_SET_TIRED L_SET_WIRED L_SET_YOUTHFUL
     L_OTHERWISE:
       →('+'≢↑ARGUMENT) ↓ L_OPTION L_NOT_OPTION
       L_OPTION:
@@ -132,12 +141,12 @@ TOUNGE←"  "
     L_VERSION: ⍝ +v
       ⎕←"cowsaypl 1.0.0"
       PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-    L_SET_BUBBLE_WIDTH: ⍝ +W WIDTH
+    L_SET_TEXT_WIDTH: ⍝ +W WIDTH
       →(0≡≢ARGUMENTS) ↓ L_WIDTH L_NO_WIDTH
       L_WIDTH:
         ARGUMENT←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
-        BUBBLE_WIDTH←"INVALID" CVTI ARGUMENT
-        →("INVALID"≡BUBBLE_WIDTH) ↓ L_SWITCH_END L_INVALID_WIDTH
+        TEXT_WIDTH←"INVALID" CVTI ARGUMENT
+        →("INVALID"≡TEXT_WIDTH) ↓ L_SWITCH_END L_INVALID_WIDTH
       L_NO_WIDTH:
         ⎕←"ERROR: No width supplied for the argument '+W'!"
         PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
@@ -193,25 +202,39 @@ TOUNGE←"  "
 L_ABORT:
 ∇
 ⍝ TODO Reenable if not in interpreter
-⍝PARSE_ARGUMENTS
+PARSE_ARGUMENTS
 
 
 
-∇DISPLAY_COW
+∇DISPLAY_COW; TEXT;WIDTH
   ⍝ Because we can't use )OFF in a function, nor jumps outside of a function,
   ⍝ there is no way to conditionally exit the program. So instead, if we need to
   ⍝ exit, we just jump to the end of this function, where we later exit.
   →(PARSE_EXIT_PROGRAM) / L_ABORT
 
+  ⍝ Gets the TEXT to go in text bubble, resulting in a vector of character
+  ⍝ vectors, with each subvector being a line of text.
   →(0≡≢ARGUMENT_TEXT) ↓ L_USE_ARGUMENT_TEXT L_USE_STDIN
-  L_USE_ARGUMENT_TEXT:
-  L_USE_STDIN:
+  L_USE_ARGUMENT_TEXT: TEXT←{⍺,' ',⍵}/ARGUMENT_TEXT ◊ →L_END_IF
+  L_USE_STDIN:         TEXT←STDIN                     ◊ →L_END_IF
+  L_END_IF:
+
+  ⍝ If DISABLE_WORD_WRAP≡1, the maximum width will be the width of the longest
+  ⍝ line, else the width will be a maximum of TEXT_WIDTH.
+  WIDTH←↑(DISABLE_WORD_WRAP+1)⌷{(⍵⌊1⌈TEXT_WIDTH),⍵}⌈/≢¨TEXT
+  ⍝ Pads each line with spaces, so that it's length is divisible by WIDTH, and
+  ⍝ splits them apart to be WIDTH characters long, returning a character matrix.
+  TEXT←↑⍪/ TEXT←WIDTH{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨TEXT
+  ⍝ Creates a border around the TEXT that makes it look like a speech bubble.
+  TEXT←WIDTH{⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}TEXT
+  ⍞←TEXT
+
 L_ABORT:
 ∇
 ⍝ TODO Reenable if not in interpreter
-⍝DISPLAY_COW
+DISPLAY_COW
 
 
 
 ⍝ TODO Reenable if not in interpreter
-⍝)OFF
+)OFF
