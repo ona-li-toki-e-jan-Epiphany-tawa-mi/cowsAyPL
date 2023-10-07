@@ -39,7 +39,7 @@
 
 
 
-⍝ Matches a singular integer, with or withou a minus sign,  with any number of
+⍝ Matches a singular integer, with or without a minus sign, with any number of
 ⍝ leading or trailing spaces.
 RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
 
@@ -54,11 +54,37 @@ RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
   L_END_IF:
 ∇
 
+⍝ The file handle for stdin for working with ⎕FIO.
+FIO_STDIN←0
+⍝ Zb ← ⎕FIO[6] Bh    fread(Zi, 1, 5000, Bh) 1 byte per Zb.
+⍝ ⎕FIO function. Reads up to 5000 bytes from the given handle and outputs them
+⍝ as a byte vector.
+FIO_FREAD←6
+⍝ Zi ← ⎕FIO[10] Bh    feof(Bh).
+⍝ ⎕FIO function. Checks the end-of-file flag of the handle, returning non-zero
+⍝ if it is set.
+FIO_FEOF←10
 
+⍝ Reads input from stdin until EOF is reached and outputs the contents as a
+⍝ character vector.
+∇CVECTOR←STDIN
+  CVECTOR←⍬
+  L_READ_LOOP:
+    CVECTOR←CVECTOR,(⎕FIO[FIO_FREAD] FIO_STDIN)
+    →(0≢(⎕FIO[FIO_FEOF] FIO_STDIN)) ↓ L_READ_LOOP L_EOF
+  L_EOF:
+  CVECTOR←⎕UCS CVECTOR
+∇
+
+
+
+∇DISPLAY_HELP
+  ⎕←"TODO: Display help information..."
+∇
 
 ⍝ Whether the program should end after the argument parsing is done. This may be
 ⍝ because of it outputting help information, an error with the input, or some
-⍝ other Reason.
+⍝ other reason.
 PARSE_EXIT_PROGRAM←0
 ⍝ The maximum width of the text bubble. Any text over the limit will be
 ⍝ word-wrapped. May be ≤ 0.
@@ -67,19 +93,16 @@ BUBBLE_WIDTH←40
 ⍝ that of the longest line, and BUBBLE_WIDTH should be ignored.
 DISABLE_WORD_WRAP←0
 ⍝ When the text to display is specified in the arguments of the command, it will
-⍝ be put into this variable. If not empty, it will have a trailing space.
+⍝ be put into this variable. The non-empty value will be a vector of character
+⍝ vectors.
 ARGUMENT_TEXT←⍬
 ⍝ The eyes to use for the cow. Must be a character vector of dimension 2.
 EYES←"oo"
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
 TOUNGE←"  "
 
-∇DISPLAY_HELP
-  ⎕←"TODO: Display help information..."
-∇
-
 ⍝ Parses the arguments supplied from the command line and updates the preceeding
-⍝ value(s) accordingly.
+⍝ variable(s) accordingly.
 ∇PARSE_ARGUMENTS; ARGUMENTS;ARGUMENT;FOUND_DOUBLE_PLUS
   ARGUMENTS←4↓⎕ARG ⍝ ⎕ARG returns: apl --script cowsay.apl -- [ARG...]
   ⍝ Indicates whether a '++' was found in the arguments, which means that all
@@ -90,7 +113,7 @@ TOUNGE←"  "
     ARGUMENT←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
 
     →(~FOUND_DOUBLE_PLUS) / L_PARSE_NORMALLY
-      ARGUMENT_TEXT←ARGUMENT_TEXT,ARGUMENT," "
+      ARGUMENT_TEXT←ARGUMENT_TEXT,⊂ARGUMENT
       →L_WHILE
     L_PARSE_NORMALLY:
 
@@ -101,7 +124,7 @@ TOUNGE←"  "
         ⎕←"ERROR: unknown option: '",ARGUMENT,"'!"
         PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
       L_NOT_OPTION:
-        ARGUMENT_TEXT←ARGUMENT_TEXT,ARGUMENT," "
+        ARGUMENT_TEXT←ARGUMENT_TEXT,⊂ARGUMENT
         →L_SWITCH_END
     L_HELP: ⍝ +h
       DISPLAY_HELP
@@ -169,7 +192,26 @@ TOUNGE←"  "
 
 L_ABORT:
 ∇
-
-
+⍝ TODO Reenable if not in interpreter
 ⍝PARSE_ARGUMENTS
+
+
+
+∇DISPLAY_COW
+  ⍝ Because we can't use )OFF in a function, nor jumps outside of a function,
+  ⍝ there is no way to conditionally exit the program. So instead, if we need to
+  ⍝ exit, we just jump to the end of this function, where we later exit.
+  →(PARSE_EXIT_PROGRAM) / L_ABORT
+
+  →(0≡≢ARGUMENT_TEXT) ↓ L_USE_ARGUMENT_TEXT L_USE_STDIN
+  L_USE_ARGUMENT_TEXT:
+  L_USE_STDIN:
+L_ABORT:
+∇
+⍝ TODO Reenable if not in interpreter
+⍝DISPLAY_COW
+
+
+
+⍝ TODO Reenable if not in interpreter
 ⍝)OFF
