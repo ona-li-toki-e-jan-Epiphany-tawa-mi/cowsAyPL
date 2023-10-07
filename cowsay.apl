@@ -61,11 +61,18 @@ RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
 ⍝ other Reason.
 PARSE_EXIT_PROGRAM←0
 ⍝ The maximum width of the text bubble. Any text over the limit will be
-⍝ word-wrapped. A width ≤ 0 indicates no word wrapping.
+⍝ word-wrapped. May be ≤ 0.
 BUBBLE_WIDTH←40
+⍝ Whether to disable word wrapping. If set, the width of the bubble should be
+⍝ that of the longest line, and BUBBLE_WIDTH should be ignored.
+DISABLE_WORD_WRAP←0
 ⍝ When the text to display is specified in the arguments of the command, it will
 ⍝ be put into this variable. If not empty, it will have a trailing space.
 ARGUMENT_TEXT←⍬
+⍝ The eyes to use for the cow. Must be a character vector of dimension 2.
+EYES←"oo"
+⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
+TOUNGE←"  "
 
 ∇DISPLAY_HELP
   ⎕←"TODO: Display help information..."
@@ -87,22 +94,22 @@ ARGUMENT_TEXT←⍬
       →L_WHILE
     L_PARSE_NORMALLY:
 
-    →({ARGUMENT≡⍵}¨"+h" "+v" "+W" "++") / L_HELP L_VERSION L_SET_BUBBLE_WIDTH L_DOUBLE_PLUS
+    →({ARGUMENT≡⍵}¨"+h" "+v" "+W" "++" "+n" "+e" "+T" "+b" "+d" "+g" "+p" "+s" "+t" "+w" "+y") / L_HELP L_VERSION L_SET_BUBBLE_WIDTH L_DOUBLE_PLUS L_DISABLE_WORD_WRAP L_SET_EYES L_SET_TOUNGE L_SET_BORG_MODE L_SET_DEAD L_SET_GREEDY L_SET_PARANOID L_SET_STONED L_SET_TIRED L_SET_WIRED L_SET_YOUTHFUL
     L_OTHERWISE:
       →('+'≢↑ARGUMENT) ↓ L_OPTION L_NOT_OPTION
       L_OPTION:
         ⎕←"ERROR: unknown option: '",ARGUMENT,"'!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_END
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
       L_NOT_OPTION:
         ARGUMENT_TEXT←ARGUMENT_TEXT,ARGUMENT," "
         →L_SWITCH_END
     L_HELP: ⍝ +h
       DISPLAY_HELP
-      PARSE_EXIT_PROGRAM←1 ◊ →L_END
+      PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
     L_VERSION: ⍝ +v
       ⎕←"cowsaypl 1.0.0"
-      PARSE_EXIT_PROGRAM←1 ◊ →L_END
-    L_SET_BUBBLE_WIDTH: ⍝ +W
+      PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
+    L_SET_BUBBLE_WIDTH: ⍝ +W WIDTH
       →(0≡≢ARGUMENTS) ↓ L_WIDTH L_NO_WIDTH
       L_WIDTH:
         ARGUMENT←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
@@ -110,20 +117,59 @@ ARGUMENT_TEXT←⍬
         →("INVALID"≡BUBBLE_WIDTH) ↓ L_SWITCH_END L_INVALID_WIDTH
       L_NO_WIDTH:
         ⎕←"ERROR: No width supplied for the argument '+W'!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_END
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
       L_INVALID_WIDTH:
         ⎕←"ERROR: Invalid width specified for argument '+W'! '",ARGUMENT,"' is not a number!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_END
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
     L_DOUBLE_PLUS: ⍝ ++
       FOUND_DOUBLE_PLUS←1 ◊ →L_SWITCH_END
+    L_DISABLE_WORD_WRAP: ⍝ +n
+      DISABLE_WORD_WRAP←1 ◊ →L_SWITCH_END
+    L_SET_EYES: ⍝ +e EYE_STRING
+      →(0≡≢ARGUMENTS) ↓ L_EYES L_NO_EYES
+      L_EYES:
+        EYES←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
+        →(2≢≢EYES) ↓ L_SWITCH_END L_INVALID_EYES
+      L_NO_EYES:
+        ⎕←"ERROR: No eye string supplied for the argument '+e'!"
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
+      L_INVALID_EYES:
+        ⎕←"ERROR: Invalid eye string ",EYES,"supplied for the argument '+e'! Must be 2 characters in length!"
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
+    L_SET_TOUNGE: ⍝ +T TOUNGE_STRING
+      →(0≡≢ARGUMENTS) ↓ L_TOUNGE L_NO_TOUNGE
+      L_TOUNGE:
+        TOUNGE←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
+        →(2≢≢TOUNGE) ↓ L_SWITCH_END L_INVALID_TOUNGE
+      L_NO_TOUNGE:
+        ⎕←"ERROR: No tounge string supplied for the argument '+T'!"
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
+      L_INVALID_TOUNGE:
+        ⎕←"ERROR: Invalid tounge string ",TOUNGE,"supplied for the argument '+T'! Must be 2 characters in length!"
+        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
+    L_SET_BORG_MODE: ⍝ +b
+      EYES←"==" ◊ →L_SWITCH_END
+    L_SET_DEAD: ⍝ +d
+      EYES←"XX" ◊ TOUNGE←"U " ◊ →L_SWITCH_END
+    L_SET_GREEDY: ⍝ +g
+      EYES←"$$" ◊ →L_SWITCH_END
+    L_SET_PARANOID: ⍝ +p
+      EYES←"@@" ◊ →L_SWITCH_END
+    L_SET_STONED: ⍝ +s
+      EYES←"**" ◊ TOUNGE←"U " ◊ →L_SWITCH_END
+    L_SET_TIRED: ⍝ +t
+      EYES←"--" ◊ →L_SWITCH_END
+    L_SET_WIRED: ⍝ +w
+      EYES←"OO" ◊ →L_SWITCH_END
+    L_SET_YOUTHFUL: ⍝ +y
+      EYES←".." ◊ →L_SWITCH_END
     L_SWITCH_END:
       →L_WHILE
   L_WHILE_END:
 
-L_END:
+L_ABORT:
 ∇
 
 
 ⍝PARSE_ARGUMENTS
-⍝⎕←ARGUMENT_TEXT
 ⍝)OFF
