@@ -73,6 +73,8 @@ FIO_FEOF←10
 FIO_LINE_FEED←10
 
 ⍝ TODO see if unicode characters can be added together to make ⎕UCS convert them
+⍝ TODO There's a weird error message (like "LOC: Cell.cc at Cell.cc" or
+⍝ something and may have to do with this function.
 ⍝ properly.
 ⍝ Reads input from stdin until EOF is reached and outputs the contents as a
 ⍝ vector of character vectors, each vector representing a line.
