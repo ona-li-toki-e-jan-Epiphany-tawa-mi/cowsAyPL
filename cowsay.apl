@@ -201,12 +201,11 @@ TOUNGE←"  "
 
 L_ABORT:
 ∇
-⍝ TODO Reenable if not in interpreter
 PARSE_ARGUMENTS
 
 
 
-∇DISPLAY_COW; TEXT;WIDTH
+∇DISPLAY_COW; TEXT;WIDTH;COW
   ⍝ Because we can't use )OFF in a function, nor jumps outside of a function,
   ⍝ there is no way to conditionally exit the program. So instead, if we need to
   ⍝ exit, we just jump to the end of this function, where we later exit.
@@ -216,7 +215,7 @@ PARSE_ARGUMENTS
   ⍝ vectors, with each subvector being a line of text.
   →(0≡≢ARGUMENT_TEXT) ↓ L_USE_ARGUMENT_TEXT L_USE_STDIN
   L_USE_ARGUMENT_TEXT: TEXT←{⍺,' ',⍵}/ARGUMENT_TEXT ◊ →L_END_IF
-  L_USE_STDIN:         TEXT←STDIN                     ◊ →L_END_IF
+  L_USE_STDIN:         TEXT←STDIN                   ◊ →L_END_IF
   L_END_IF:
 
   ⍝ If DISABLE_WORD_WRAP≡1, the maximum width will be the width of the longest
@@ -224,17 +223,18 @@ PARSE_ARGUMENTS
   WIDTH←↑(DISABLE_WORD_WRAP+1)⌷{(⍵⌊1⌈TEXT_WIDTH),⍵}⌈/≢¨TEXT
   ⍝ Pads each line with spaces, so that it's length is divisible by WIDTH, and
   ⍝ splits them apart to be WIDTH characters long, returning a character matrix.
-  TEXT←↑⍪/ TEXT←WIDTH{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨TEXT
+  TEXT←↑⍪/ WIDTH{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨TEXT
   ⍝ Creates a border around the TEXT that makes it look like a speech bubble.
   TEXT←WIDTH{⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}TEXT
-  ⍞←TEXT
+  ⍝ Say.
+  COW←⊃('\') (' \') ('   ^__^') ('   (',EYES,')\_______') ('   (__)\       )\/\') ('    ',TOUNGE,' ||----w |') ('       ||     ||')
+  ⍝ Offset cow to end of text bubble and print the finished product.
+  ⍞←⊃TEXT (COW,⍨' '⍴⍨WIDTH,⍨↑⍴COW)
 
 L_ABORT:
 ∇
-⍝ TODO Reenable if not in interpreter
 DISPLAY_COW
 
 
 
-⍝ TODO Reenable if not in interpreter
 )OFF
