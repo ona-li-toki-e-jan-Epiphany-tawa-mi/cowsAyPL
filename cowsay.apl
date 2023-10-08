@@ -25,16 +25,16 @@
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
-⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-⍝ | Cowsay in GnuAPL. |
-⍝ \___________________/
-⍝                      \
-⍝                       \
-⍝                         ^__^
-⍝                         (oo)\_______
-⍝                         (__)\       )\/\
-⍝                             ||----w |
-⍝                             ||     ||
+⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
+⍝ | Cowsay in GnuAPL |
+⍝ \__________________/
+⍝                 \
+⍝                  \
+⍝                    ^__^
+⍝                    (oo)\_______
+⍝                    (__)\       )\/\
+⍝                        ||----w |
+⍝                        ||     ||
 ⍝
 
 
@@ -87,10 +87,112 @@ FIO_LINE_FEED←10
 
 
 
-∇DISPLAY_HELP
-  ⎕←"TODO: Display help information..."
-∇
+HELP_MESSAGE←"""
+    cowsaypl - cowsay written in GnuAPL.
 
+SYNOPSIS:
+    cowsaypl [+bdgpstwy] [+h] [+v] [+e EYES] [+T TOUNGE] [+n|+W WIDTH] [++]
+             [TEXT...]
+
+DESCRIPTION:
+    Prints out ASCII art of a cow saying the supplied text within a speech
+    bubble. If no text is supplied as arguments to the function, it will instead
+    be pulled from STDIN until an EOF is reached.
+
+    The maximum width of the text bubble defaults to 40. If any lines of text
+    supplied exceed that length, they will be word-wrapped. If the max line size
+    is smaller than the max width, the max line size will be used for the size of
+    the text bubble. The max width can be set with +W WIDTH, or word-wrapping
+    can be disabled completely using +n.
+
+    The cow's appearance can either be set to a preset (using any of +bdgpstwy)
+    or custom set using +e EYES and/or +T TOUNGE.
+
+    Note that you cannot specify multiple options with one plus, i.e. '+be 00'
+    is invalid, and instead you would use '+b +e 00'.
+
+    Currently cowsaypl cannot print out Unicode characters. might fix at a later
+    date.
+
+COMMAND LINE OPTIONS:
+    +h
+        Displays this help message and exits.
+
+    +W WIDTH
+        Integer. Sets the maximum WIDTH of lines within the generated text
+        bubbles. Incompatible with +n.
+
+    +n
+        Prevents word wrapping. Width of the text bubble is the length of the
+        largest line from TEXT. Incompatible with +W.
+
+    +e EYES
+        Sets the string for the EYES, must be 2 characters long. Incompatible
+        with appearance presets.
+
+    +T TOUNGE
+        Sets the string for the TOUNGE, must be either 1 or 2 characters long.
+        If only 1 character is supplied a space will be appended to it.
+        Incompatible with a few appearance presets.
+
+    +b
+        Borg mode. Appearance preset. Incompatible with +e EYES and other
+        presets.
+
+    +d
+        Dead. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other
+        presets.
+
+    +g
+        Greedy. Appearance preset. Incompatible with +e EYES and other presets.
+
+    +p
+        Paranoid. Appearance preset. Incompatible with +e EYES and other
+        presets.
+
+    +s
+        Stoned. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and
+        other presets.
+
+    +t
+        Tired. Appearance preset. Incompatible with +e EYES and other presets.
+
+    +w
+        Wired. Appearance preset. Incompatible with +e EYES and other presets.
+
+    +y
+        Young. Appearance preset. Incompatible with +e EYES and other presets.
+
+AUTHOR(S):
+    ona li toki e jan Epiphany tawa mi.
+
+BUGS:
+    Report bugs to <https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/cowsAy
+    PL/issues>.
+
+COPYRIGHT:
+    MIT License
+
+    Copyright (c) 2022 ona-li-toki-e-jan-Epiphany-tawa-mi
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the Software), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+    IN THE SOFTWARE.
+"""
 ⍝ Whether the program should end after the argument parsing is done. This may be
 ⍝ because of it outputting help information, an error with the input, or some
 ⍝ other reason.
@@ -136,7 +238,7 @@ TOUNGE←"  "
         ARGUMENT_TEXT←ARGUMENT_TEXT,⊂ARGUMENT
         →L_SWITCH_END
     L_HELP: ⍝ +h
-      DISPLAY_HELP
+      ⍞←⊃HELP_MESSAGE
       PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
     L_VERSION: ⍝ +v
       ⎕←"cowsaypl 1.0.0"
