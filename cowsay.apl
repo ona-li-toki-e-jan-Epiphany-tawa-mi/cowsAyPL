@@ -229,7 +229,8 @@ PARSE_ARGUMENTS
   ⍝ Say.
   COW←⊃('\') (' \') ('   ^__^') ('   (',EYES,')\_______') ('   (__)\       )\/\') ('    ',TOUNGE,' ||----w |') ('       ||     ||')
   ⍝ Offset cow to end of text bubble and print the finished product.
-  ⍞←⊃TEXT (COW,⍨' '⍴⍨WIDTH,⍨↑⍴COW)
+  ⍞←TEXT
+  ⍞←(COW,⍨' '⍴⍨WIDTH,⍨↑⍴COW)
 
 L_ABORT:
 ∇
