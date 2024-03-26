@@ -301,19 +301,21 @@ PARSE_ARGUMENTS
   L_USE_STDIN:         TEXT←STDIN                   ◊ →L_END_IF
   L_END_IF:
 
+  ⍝ Takes a block of text ⍵ and splits it into strings that are ⍺ characters
+  ⍝ long, and pads the final line with spaces to match the desired length.
+  ⍝ Returns a character matrix.
+  SLICE_TEXT←{↑⍪/ ⍺{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨⍵}
+  ⍝ Takes a character matrix ⍵ and adds characters to make it look like the text
+  ⍝ is enveloped in a text bubble.
+  BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}⍵}
+
   ⍝ If DISABLE_WORD_WRAP≡1, the maximum width will be the width of the longest
   ⍝ line, else the width will be a maximum of TEXT_WIDTH.
   WIDTH←↑(DISABLE_WORD_WRAP+1)⌷{(⍵⌊1⌈TEXT_WIDTH),⍵}⌈/≢¨TEXT
-  ⍝ Pads each line with spaces, so that it's length is divisible by WIDTH, and
-  ⍝ splits them apart to be WIDTH characters long, returning a character matrix.
-  TEXT←↑⍪/ WIDTH{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨TEXT
-  ⍝ Creates a border around the TEXT that makes it look like a speech bubble.
-  TEXT←WIDTH{⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}TEXT
+  ⍝ Prints out the text bubble.
+  ⍞←BUBBLIFY WIDTH SLICE_TEXT TEXT
   ⍝ Say.
-  COW←⊃('\') (' \') ('   ^__^') ('   (',EYES,')\_______') ('   (__)\       )\/\') ('    ',TOUNGE,' ||----w |') ('       ||     ||')
-  ⍝ Offset cow to end of text bubble and print the finished product.
-  ⍞←TEXT
-  ⍞←(COW,⍨' '⍴⍨WIDTH,⍨↑⍴COW)
+  ⍞←{⍵,⍨' '⍴⍨WIDTH,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',EYES,')\_______') ('   (__)\       )\/\') ('    ',TOUNGE,' ||----w |') ('       ||     ||')
 
 L_ABORT:
 ∇
