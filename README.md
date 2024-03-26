@@ -19,9 +19,9 @@
 |  is APL (<3 btw.)                                            |
 |                                                              |
 | CowsAyPL can either accept text supplied as arguments, or by |
-|  pulling from STDIN when text arguments are specified, andpr |
-| oduces ASCII art of a cow saying that text within a text bub |
-| ble.                                                         |
+|  pulling from STDIN when text arguments are specified, and p |
+| roduces ASCII art of a cow saying that text within a text bu |
+| bble.                                                        |
 |                                                              |
 | The look of the cow and the width of the text bubble can be  |
 | controlled via options supplied to the program.              |
@@ -67,6 +67,27 @@
                                                                (XX)\_______
                                                                (__)\       )\/\
                                                                 U  ||----w |
+                                                                   ||     ||
+```
+
+## Installation
+
+```
+/¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
+| cowsaypl is just a single script, but you can also install i |
+| t with Nix from the NUR (https://github.com/nix-community/NU |
+| R) with the following attribute. Note that the nixpkgs versi |
+| on of GnuAPL does not have regular expressions, so some argu |
+| ments will not work.                                         |
+|                                                              |
+| nur.repos.ona-li-toki-e-jan-Epiphany-tawa-mi.cowsaypl        |
+\______________________________________________________________/
+                                                            \
+                                                             \
+                                                               ^__^
+                                                               (..)\_______
+                                                               (__)\       )\/\
+                                                                   ||----w |
                                                                    ||     ||
 ```
 
