@@ -234,7 +234,7 @@ TOUNGE←"  "
       ⍞←⊃HELP_MESSAGE
       PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
     L_VERSION: ⍝ +v
-      ⎕←"cowsaypl 1.0.0"
+      ⎕←"cowsaypl 1.1.0"
       PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
     L_SET_TEXT_WIDTH: ⍝ +W WIDTH
       →(0≡≢ARGUMENTS) ↓ L_WIDTH L_NO_WIDTH

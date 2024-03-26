@@ -70,29 +70,6 @@
                                                                    ||     ||
 ```
 
-## Installation
-
-```text
-/¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-| You can run cowsay.apl as a standalone script. But, if you w |
-| ould like to run it on the command line from anywhere by typ |
-| ing "cowsaypl", run the following commands on the script fil |
-| e:                                                           |
-|                                                              |
-| sudo cp cowsay.apl /usr/local/bin/cowsaypl                   |
-| sudo chown root:root /usr/local/bin/cowsaypl                 |
-| sudo chmod u=w,a+rx /usr/local/bin/cowsaypl                  |
-|                                                              |
-\______________________________________________________________/
-                                                            \
-                                                             \
-                                                               ^__^
-                                                               (..)\_______
-                                                               (__)\       )\/\
-                                                                   ||----w |
-                                                                   ||     ||
-```
-
 ## Examples
 
 ```console
