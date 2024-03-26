@@ -2,7 +2,7 @@
 
 ⍝ MIT License
 ⍝
-⍝ Copyright (c) 2022-2023 ona-li-toki-e-jan-Epiphany-tawa-mi
+⍝ Copyright (c) 2022-2024 ona-li-toki-e-jan-Epiphany-tawa-mi
 ⍝
 ⍝ Permission is hereby granted, free of charge, to any person obtaining a copy
 ⍝ of this software and associated documentation files (the "Software"), to
@@ -70,7 +70,6 @@ FIO_FEOF←10
 FIO_LINE_FEED←10
 
 ⍝ TODO see if unicode characters can be added together to make ⎕UCS convert them
-⍝ TODO There's a weird error message (like "LOC: Cell.cc at Cell.cc" or
 ⍝ something and may have to do with this function.
 ⍝ properly.
 ⍝ Reads input from stdin until EOF is reached and outputs the contents as a
@@ -170,7 +169,7 @@ BUGS:
     PL/issues>.
 
 COPYRIGHT:
-    Copyright (c) 2022-2023 ona-li-toki-e-jan-Epiphany-tawa-mi. MIT License This
+    Copyright (c) 2022-2024 ona-li-toki-e-jan-Epiphany-tawa-mi. MIT License This
     is free software: you are free to change and redistribute it. There is NO
     WARRANTY, to the extent permitted by law.
 """
@@ -196,13 +195,26 @@ TOUNGE←"  "
 ⍝ Parses the arguments supplied from the command line and updates the preceeding
 ⍝ variable(s) accordingly.
 ∇PARSE_ARGUMENTS; ARGUMENTS;ARGUMENT;FOUND_DOUBLE_PLUS
-  ARGUMENTS←4↓⎕ARG ⍝ ⎕ARG returns: apl --script cowsay.apl -- [ARG...]
+  ⍝ ⎕ARG returns: apl --script cowsay.apl -- [ARG...]. We need to check if there
+  ⍝ are not more than 4 arguments before dropping the first four to avoid some
+  ⍝ weird error from being printed.
+  →(4<≢⎕ARG) / L_START_PARSING
+    →L_ABORT
+  L_START_PARSING:
+  ARGUMENTS←4↓⎕ARG
+
   ⍝ Indicates whether a '++' was found in the arguments, which means that all
   ⍝ further values are to be interpreted as text.
   FOUND_DOUBLE_PLUS←0
 
   L_WHILE: →(0≡≢ARGUMENTS) / L_WHILE_END
-    ARGUMENT←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
+    ARGUMENT←↑ARGUMENTS
+    ⍝ We need to check before dropping arugments to avoid a weird error message.
+    →(1≡≢ARGUMENTS) / L_FINAL_ARGUMENT
+      ARGUMENTS←1↓ARGUMENTS ◊ →L_NOT_FINAL_ARGUMENT
+    L_FINAL_ARGUMENT:
+      ARGUMENTS←⍬
+    L_NOT_FINAL_ARGUMENT:
 
     →(~FOUND_DOUBLE_PLUS) / L_PARSE_NORMALLY
       ARGUMENT_TEXT←ARGUMENT_TEXT,⊂ARGUMENT
@@ -288,7 +300,16 @@ PARSE_ARGUMENTS
 
 
 
-∇DISPLAY_COW; TEXT;WIDTH;COW
+⍝ Takes a block of text ⍵ and splits it into strings that are ⍺ characters
+⍝ long, and pads the final line with spaces to match the desired length.
+⍝ Returns a character matrix.
+SLICE_TEXT←{↑⍪/ ⍺{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨⍵}
+
+⍝ Takes a character matrix ⍵ and adds characters to make it look like the text
+⍝ is enveloped in a text bubble.
+BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}⍵}
+
+∇DISPLAY_COW; TEXT;WIDTH
   ⍝ Because we can't use )OFF in a function, nor jumps outside of a function,
   ⍝ there is no way to conditionally exit the program. So instead, if we need to
   ⍝ exit, we just jump to the end of this function, where we later exit.
@@ -300,14 +321,6 @@ PARSE_ARGUMENTS
   L_USE_ARGUMENT_TEXT: TEXT←{⍺,' ',⍵}/ARGUMENT_TEXT ◊ →L_END_IF
   L_USE_STDIN:         TEXT←STDIN                   ◊ →L_END_IF
   L_END_IF:
-
-  ⍝ Takes a block of text ⍵ and splits it into strings that are ⍺ characters
-  ⍝ long, and pads the final line with spaces to match the desired length.
-  ⍝ Returns a character matrix.
-  SLICE_TEXT←{↑⍪/ ⍺{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨⍵}
-  ⍝ Takes a character matrix ⍵ and adds characters to make it look like the text
-  ⍝ is enveloped in a text bubble.
-  BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}⍵}
 
   ⍝ If DISABLE_WORD_WRAP≡1, the maximum width will be the width of the longest
   ⍝ line, else the width will be a maximum of TEXT_WIDTH.
