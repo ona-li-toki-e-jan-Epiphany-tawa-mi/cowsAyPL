@@ -32,7 +32,6 @@
 ⍝                    (__)\       )\/\
 ⍝                        ||----w |
 ⍝                        ||     ||
-⍝
 
 
 
@@ -86,92 +85,52 @@ FIO_LINE_FEED←10
 
 
 HELP_MESSAGE←"""
-    cowsaypl - cowsay written in GnuAPL.
+Usages:
+  cowsaypl [options...] [TEXT...]
+  ./cowsay.apl [options...] [TEXT...]
+  apl --script ahd.apl -- [options...] [TEXT...]
 
-SYNOPSIS:
-    cowsaypl [+bdgpstwy] [+h] [+v] [+e EYES] [+T TOUNGE] [+n|+W WIDTH] [++]
-             [TEXT...]
+Prints out ASCII art of a cow saying the supplied TEXT within a speech bubble.
+If no TEXT is supplied as arguments to the function, it will instead be pulled
+from stdin until an EOF is reached.
 
-DESCRIPTION:
-    Prints out ASCII art of a cow saying the supplied text within a speech
-    bubble. If no text is supplied as arguments to the function, it will instead
-    be pulled from STDIN until an EOF is reached.
+Currently cowsaypl cannot print out Unicode characters. might fix at a later
+date.
 
-    The maximum width of the text bubble defaults to 40. If any lines of text
-    supplied exceed that length, they will be word-wrapped. If the max line size
-    is smaller than the max width, the max line size will be used for the size of
-    the text bubble. The max width can be set with +W WIDTH, or word-wrapping
-    can be disabled completely using +n.
-
-    The cow's appearance can either be set to a preset (using any of +bdgpstwy)
-    or custom set using +e EYES and/or +T TOUNGE.
-
-    Note that you cannot specify multiple options with one plus, i.e. '+be 00'
-    is invalid, and instead you would use '+b +e 00'.
-
-    Currently cowsaypl cannot print out Unicode characters. might fix at a later
-    date.
-
-COMMAND LINE OPTIONS:
-    +h
-        Displays this help message and exits.
-
-    +W WIDTH
-        Integer. Sets the maximum WIDTH of lines within the generated text
-        bubbles. Incompatible with +n.
-
-    +n
-        Prevents word wrapping. Width of the text bubble is the length of the
-        largest line from TEXT. Incompatible with +W.
-
-    +e EYES
-        Sets the string for the EYES, must be 2 characters long. Incompatible
-        with appearance presets.
-
-    +T TOUNGE
-        Sets the string for the TOUNGE, must be either 1 or 2 characters long.
-        If only 1 character is supplied a space will be appended to it.
-        Incompatible with a few appearance presets.
-
-    +b
-        Borg mode. Appearance preset. Incompatible with +e EYES and other
-        presets.
-
-    +d
-        Dead. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other
-        presets.
-
-    +g
-        Greedy. Appearance preset. Incompatible with +e EYES and other presets.
-
-    +p
-        Paranoid. Appearance preset. Incompatible with +e EYES and other
-        presets.
-
-    +s
-        Stoned. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and
-        other presets.
-
-    +t
-        Tired. Appearance preset. Incompatible with +e EYES and other presets.
-
-    +w
-        Wired. Appearance preset. Incompatible with +e EYES and other presets.
-
-    +y
-        Young. Appearance preset. Incompatible with +e EYES and other presets.
-
-AUTHOR(S):
-    ona li toki e jan Epiphany tawa mi.
-
-BUGS:
-    Report bugs to <https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/cowsAy
-    PL/issues>.
-
-COPYRIGHT:
-    Copyright (c) 2022-2024 ona-li-toki-e-jan-Epiphany-tawa-mi. MIT License This
-    is free software: you are free to change and redistribute it. There is NO
-    WARRANTY, to the extent permitted by law.
+Options:
+  +h
+    Displays this help message and exits.
+  +W WIDTH
+    Unsinged integer. Sets the maximum WIDTH of lines within the generated text
+    bubbles. Defaults to 40 Incompatible with +n.
+  +n
+    Prevents word wrapping. Width of the text bubble is the length of the
+    largest line from TEXT. Incompatible with +W.
+  +e EYES
+    Sets the string for the EYES, must be 2 characters long. Incompatible with
+    appearance presets.
+  +T TOUNGE
+    Sets the string for the TOUNGE, must be either 1 or 2 characters long. If
+    only 1 character is supplied a space will be appended to it. Incompatible
+    with a few appearance presets.
+  +b
+    Borg mode. Appearance preset. Incompatible with +e EYES and other presets.
+  +d
+    Dead. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other
+    presets.
+  +g
+    Greedy. Appearance preset. Incompatible with +e EYES and other presets.
+  +p
+    Paranoid. Appearance preset. Incompatible with +e EYES and other presets.
+  +s
+    Stoned. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other
+    presets.
+  +t
+    Tired. Appearance preset. Incompatible with +e EYES and other presets.
+  +w
+    Wired. Appearance preset. Incompatible with +e EYES and other presets
+  +y
+    Young. Appearance preset. Incompatible with +e EYES and other presets.
 """
 ⍝ Whether the program should end after the argument parsing is done. This may be
 ⍝ because of it outputting help information, an error with the input, or some

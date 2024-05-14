@@ -47,9 +47,8 @@
 
 ```
 /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-| You will need GnuAPL installed on your system. You can find  |
-| information about GnuAPL at: <https://www.gnu.org/software/a |
-| pl>                                                          |
+| You will need GnuAPL (https://www.gnu.org/software/apl) inst |
+| alled on your system.                                        |
 |                                                              |
 | If compiling GnuAPL from source, make sure to compile in reg |
 | ular expression support with libpcre2.                       |
@@ -57,8 +56,8 @@
 | Execute either of the following command(s) in the project di |
 | rectory to get started:                                      |
 |                                                              |
-| ./cowsay.apl [ARGS..]                                        |
-| apl --script cowsay.apl -- [ARGS..]                          |
+| ./cowsay.apl [options..] [TEXT...]                           |
+| apl --script cowsay.apl -- [options...] [TEXT...]            |
 |                                                              |
 \______________________________________________________________/
                                                             \
@@ -74,13 +73,18 @@
 
 ```
 /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-| cowsaypl is just a single script, but you can also install i |
-| t with Nix from the NUR (https://github.com/nix-community/NU |
-| R) with the following attribute. Note that the nixpkgs versi |
-| on of GnuAPL does not have regular expressions, so some argu |
-| ments will not work.                                         |
+| If you would like to install it, you can do so with the fowl |
+| lowing make command:                                         |
+|                                                              |
+| make install                                                 |
+|                                                              |
+| You can also install it with Nix from the NUR (https://githu |
+| b.com/nix-community/NUR) with the following attribute. Note  |
+| that the nixpkgs version of GnuAPL does not have regular exp |
+| ressions, so some arguments will not work.                   |
 |                                                              |
 | nur.repos.ona-li-toki-e-jan-Epiphany-tawa-mi.cowsaypl        |
+|                                                              |
 \______________________________________________________________/
                                                             \
                                                              \
