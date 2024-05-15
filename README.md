@@ -47,9 +47,6 @@
 | You will need GnuAPL (https://www.gnu.org/software/apl) inst |
 | alled on your system.                                        |
 |                                                              |
-| If compiling GnuAPL from source, make sure to compile in reg |
-| ular expression support with libpcre2.                       |
-|                                                              |
 | Execute either of the following command(s) in the project di |
 | rectory to get started:                                      |
 |                                                              |
@@ -75,10 +72,11 @@
 |                                                              |
 | make install                                                 |
 |                                                              |
+| Note that the script expects GnuAPL to be in /usr/bin/apl. M |
+| odify the shebang before-hand if your setup differs.         |
+|                                                              |
 | You can also install it with Nix from the NUR (https://githu |
-| b.com/nix-community/NUR) with the following attribute. Note  |
-| that the nixpkgs version of GnuAPL does not have regular exp |
-| ressions, so some arguments will not work.                   |
+| b.com/nix-community/NUR) with the following attribute:       |
 |                                                              |
 | nur.repos.ona-li-toki-e-jan-Epiphany-tawa-mi.cowsaypl        |
 |                                                              |
