@@ -20,8 +20,8 @@
 |                                                              |
 | CowsAyPL can either accept text supplied as arguments, or by |
 |  pulling from STDIN when text arguments are specified, and p |
-| roduces ASCII art of a cow saying that text within a text bu |
-| bble.                                                        |
+| roduces text art of a cow saying that text within a text bub |
+| ble.                                                         |
 |                                                              |
 | The look of the cow and the width of the text bubble can be  |
 | controlled via options supplied to the program.              |
