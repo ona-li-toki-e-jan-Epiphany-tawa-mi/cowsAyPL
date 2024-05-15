@@ -138,10 +138,10 @@ RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
 ∇INTEGER←DEFAULT CVTI CVECTOR
   CVECTOR←RE_MATCH_NUMBER ⎕RE CVECTOR ⍝ if CVECTOR is not a number, returns
                                       ⍝ empty vector.
-  →(~×⍴CVECTOR) ↓ L_A_NUMBER L_NOT_A_NUMBER
-  L_A_NUMBER:     INTEGER←⍎CVECTOR ◊ →L_END_IF
-  L_NOT_A_NUMBER: INTEGER←DEFAULT  ◊ →L_END_IF
-  L_END_IF:
+  →(~×⍴CVECTOR) ↓ LA_NUMBER LNOT_A_NUMBER
+  LA_NUMBER:     INTEGER←⍎CVECTOR ◊ →LEND_IF
+  LNOT_A_NUMBER: INTEGER←DEFAULT  ◊ →LEND_IF
+  LEND_IF:
 ∇
 
 ⍝ Parses the arguments supplied from the command line and updates the preceeding
@@ -150,103 +150,103 @@ RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
   ⍝ ⎕ARG returns: apl --script cowsay.apl -- [ARG...]. We need to check if there
   ⍝ are not more than 4 arguments before dropping the first four to avoid some
   ⍝ weird error from being printed.
-  →(4<≢⎕ARG) / L_START_PARSING
-    →L_ABORT
-  L_START_PARSING:
+  →(4<≢⎕ARG) / LSTART_PARSING
+    →LABORT
+  LSTART_PARSING:
   ARGUMENTS←4↓⎕ARG
 
   ⍝ Indicates whether a '++' was found in the arguments, which means that all
   ⍝ further values are to be interpreted as text.
   FOUND_DOUBLE_PLUS←0
 
-  L_WHILE: →(0≡≢ARGUMENTS) / L_WHILE_END
+  LWHILE: →(0≡≢ARGUMENTS) / LWHILE_END
     ARGUMENT←↑ARGUMENTS
     ⍝ We need to check before dropping arugments to avoid a weird error message.
-    →(1≡≢ARGUMENTS) / L_FINAL_ARGUMENT
-      ARGUMENTS←1↓ARGUMENTS ◊ →L_NOT_FINAL_ARGUMENT
-    L_FINAL_ARGUMENT:
+    →(1≡≢ARGUMENTS) / LFINALARGUMENT
+      ARGUMENTS←1↓ARGUMENTS ◊ →LNOT_FINALARGUMENT
+    LFINALARGUMENT:
       ARGUMENTS←⍬
-    L_NOT_FINAL_ARGUMENT:
+    LNOT_FINALARGUMENT:
 
-    →(~FOUND_DOUBLE_PLUS) / L_PARSE_NORMALLY
+    →(~FOUND_DOUBLE_PLUS) / LPARSE_NORMALLY
       ARGUMENT_TEXT←ARGUMENT_TEXT,⊂ARGUMENT
-      →L_WHILE
-    L_PARSE_NORMALLY:
+      →LWHILE
+    LPARSE_NORMALLY:
 
-    →({ARGUMENT≡⍵}¨"+h" "+v" "+W" "++" "+n" "+e" "+T" "+b" "+d" "+g" "+p" "+s" "+t" "+w" "+y") / L_HELP L_VERSION L_SET_TEXT_WIDTH L_DOUBLE_PLUS L_DISABLE_WORD_WRAP L_SET_EYES L_SET_TOUNGE L_SET_BORG_MODE L_SET_DEAD L_SET_GREEDY L_SET_PARANOID L_SET_STONED L_SET_TIRED L_SET_WIRED L_SET_YOUTHFUL
-    L_OTHERWISE:
-      →('+'≢↑ARGUMENT) ↓ L_OPTION L_NOT_OPTION
-      L_OPTION:
+    →({ARGUMENT≡⍵}¨"+h" "+v" "+W" "++" "+n" "+e" "+T" "+b" "+d" "+g" "+p" "+s" "+t" "+w" "+y") / LHELP LVERSION LSET_TEXT_WIDTH LDOUBLE_PLUS LDISABLE_WORD_WRAP LSET_EYES LSET_TOUNGE LSET_BORG_MODE LSET_DEAD LSET_GREEDY LSET_PARANOID LSET_STONED LSET_TIRED LSET_WIRED LSET_YOUTHFUL
+    LOTHERWISE:
+      →('+'≢↑ARGUMENT) ↓ LOPTION LNOT_OPTION
+      LOPTION:
         ⎕←"ERROR: unknown option: '",ARGUMENT,"'!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-      L_NOT_OPTION:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+      LNOT_OPTION:
         ARGUMENT_TEXT←ARGUMENT_TEXT,⊂ARGUMENT
-        →L_SWITCH_END
-    L_HELP: ⍝ +h
+        →LSWITCH_END
+    LHELP: ⍝ +h
       ⍞←⊃HELP_MESSAGE
-      PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-    L_VERSION: ⍝ +v
+      PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+    LVERSION: ⍝ +v
       ⎕←"cowsaypl 1.1.0"
-      PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-    L_SET_TEXT_WIDTH: ⍝ +W WIDTH
-      →(0≡≢ARGUMENTS) ↓ L_WIDTH L_NO_WIDTH
-      L_WIDTH:
+      PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+    LSET_TEXT_WIDTH: ⍝ +W WIDTH
+      →(0≡≢ARGUMENTS) ↓ LWIDTH LNO_WIDTH
+      LWIDTH:
         ARGUMENT←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
         TEXT_WIDTH←"INVALID" CVTI ARGUMENT
-        →("INVALID"≡TEXT_WIDTH) ↓ L_SWITCH_END L_INVALID_WIDTH
-      L_NO_WIDTH:
+        →("INVALID"≡TEXT_WIDTH) ↓ LSWITCH_END LINVALID_WIDTH
+      LNO_WIDTH:
         ⎕←"ERROR: No width supplied for the argument '+W'!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-      L_INVALID_WIDTH:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+      LINVALID_WIDTH:
         ⎕←"ERROR: Invalid width specified for argument '+W'! '",ARGUMENT,"' is not a number!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-    L_DOUBLE_PLUS: ⍝ ++
-      FOUND_DOUBLE_PLUS←1 ◊ →L_SWITCH_END
-    L_DISABLE_WORD_WRAP: ⍝ +n
-      DISABLE_WORD_WRAP←1 ◊ →L_SWITCH_END
-    L_SET_EYES: ⍝ +e EYE_STRING
-      →(0≡≢ARGUMENTS) ↓ L_EYES L_NO_EYES
-      L_EYES:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+    LDOUBLE_PLUS: ⍝ ++
+      FOUND_DOUBLE_PLUS←1 ◊ →LSWITCH_END
+    LDISABLE_WORD_WRAP: ⍝ +n
+      DISABLE_WORD_WRAP←1 ◊ →LSWITCH_END
+    LSET_EYES: ⍝ +e EYE_STRING
+      →(0≡≢ARGUMENTS) ↓ LEYES LNO_EYES
+      LEYES:
         EYES←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
-        →(2≢≢EYES) ↓ L_SWITCH_END L_INVALID_EYES
-      L_NO_EYES:
+        →(2≢≢EYES) ↓ LSWITCH_END LINVALID_EYES
+      LNO_EYES:
         ⎕←"ERROR: No eye string supplied for the argument '+e'!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-      L_INVALID_EYES:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+      LINVALID_EYES:
         ⎕←"ERROR: Invalid eye string ",EYES,"supplied for the argument '+e'! Must be 2 characters in length!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-    L_SET_TOUNGE: ⍝ +T TOUNGE_STRING
-      →(0≡≢ARGUMENTS) ↓ L_TOUNGE L_NO_TOUNGE
-      L_TOUNGE:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+    LSET_TOUNGE: ⍝ +T TOUNGE_STRING
+      →(0≡≢ARGUMENTS) ↓ LTOUNGE LNO_TOUNGE
+      LTOUNGE:
         TOUNGE←↑ARGUMENTS ◊ ARGUMENTS←1↓ARGUMENTS
-        →(2≢≢TOUNGE) ↓ L_SWITCH_END L_INVALID_TOUNGE
-      L_NO_TOUNGE:
+        →(2≢≢TOUNGE) ↓ LSWITCH_END LINVALID_TOUNGE
+      LNO_TOUNGE:
         ⎕←"ERROR: No tounge string supplied for the argument '+T'!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-      L_INVALID_TOUNGE:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+      LINVALID_TOUNGE:
         ⎕←"ERROR: Invalid tounge string ",TOUNGE,"supplied for the argument '+T'! Must be 2 characters in length!"
-        PARSE_EXIT_PROGRAM←1 ◊ →L_ABORT
-    L_SET_BORG_MODE: ⍝ +b
-      EYES←"==" ◊ →L_SWITCH_END
-    L_SET_DEAD: ⍝ +d
-      EYES←"XX" ◊ TOUNGE←"U " ◊ →L_SWITCH_END
-    L_SET_GREEDY: ⍝ +g
-      EYES←"$$" ◊ →L_SWITCH_END
-    L_SET_PARANOID: ⍝ +p
-      EYES←"@@" ◊ →L_SWITCH_END
-    L_SET_STONED: ⍝ +s
-      EYES←"**" ◊ TOUNGE←"U " ◊ →L_SWITCH_END
-    L_SET_TIRED: ⍝ +t
-      EYES←"--" ◊ →L_SWITCH_END
-    L_SET_WIRED: ⍝ +w
-      EYES←"OO" ◊ →L_SWITCH_END
-    L_SET_YOUTHFUL: ⍝ +y
-      EYES←".." ◊ →L_SWITCH_END
-    L_SWITCH_END:
-      →L_WHILE
-  L_WHILE_END:
+        PARSE_EXIT_PROGRAM←1 ◊ →LABORT
+    LSET_BORG_MODE: ⍝ +b
+      EYES←"==" ◊ →LSWITCH_END
+    LSET_DEAD: ⍝ +d
+      EYES←"XX" ◊ TOUNGE←"U " ◊ →LSWITCH_END
+    LSET_GREEDY: ⍝ +g
+      EYES←"$$" ◊ →LSWITCH_END
+    LSET_PARANOID: ⍝ +p
+      EYES←"@@" ◊ →LSWITCH_END
+    LSET_STONED: ⍝ +s
+      EYES←"**" ◊ TOUNGE←"U " ◊ →LSWITCH_END
+    LSET_TIRED: ⍝ +t
+      EYES←"--" ◊ →LSWITCH_END
+    LSET_WIRED: ⍝ +w
+      EYES←"OO" ◊ →LSWITCH_END
+    LSET_YOUTHFUL: ⍝ +y
+      EYES←".." ◊ →LSWITCH_END
+    LSWITCH_END:
+      →LWHILE
+  LWHILE_END:
 
-L_ABORT:
+LABORT:
 ∇
 PARSE_ARGUMENTS
 
@@ -265,14 +265,15 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   ⍝ Because we can't use )OFF in a function, nor jumps outside of a function,
   ⍝ there is no way to conditionally exit the program. So instead, if we need to
   ⍝ exit, we just jump to the end of this function, where we later exit.
-  →(PARSE_EXIT_PROGRAM) / L_ABORT
+  →(PARSE_EXIT_PROGRAM) / LABORT
 
   ⍝ Gets the TEXT to go in text bubble, resulting in a vector of character
   ⍝ vectors, with each subvector being a line of text.
-  →(0≡≢ARGUMENT_TEXT) ↓ L_USE_ARGUMENT_TEXT L_USE_STDIN
-  L_USE_ARGUMENT_TEXT: TEXT←{⍺,' ',⍵}/ARGUMENT_TEXT ◊ →L_END_IF
-  L_USE_STDIN:         TEXT←FIO∆READ_ENTIRE_STDIN   ◊ →L_END_IF
-  L_END_IF:
+  →(0≡≢ARGUMENT_TEXT) ⍴ LUSE_STDIN
+    TEXT←{⍺,' ',⍵}/ARGUMENT_TEXT ◊ →LDONT_USE_STDIN
+  LUSE_STDIN:
+    TEXT←FIO∆READ_ENTIRE_STDIN
+  LDONT_USE_STDIN:
 
   ⍝ If DISABLE_WORD_WRAP≡1, the maximum width will be the width of the longest
   ⍝ line, else the width will be a maximum of TEXT_WIDTH.
@@ -282,7 +283,7 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   ⍝ Say.
   ⍞←{⍵,⍨' '⍴⍨WIDTH,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',EYES,')\_______') ('   (__)\       )\/\') ('    ',TOUNGE,' ||----w |') ('       ||     ||')
 
-L_ABORT:
+LABORT:
 ∇
 DISPLAY_COW
 
