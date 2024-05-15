@@ -31,9 +31,6 @@
 | Note: the ability to list and use cowfiles is not implemente |
 | d.                                                           |
 |                                                              |
-| Note: this currently does not support outputting Unicode cha |
-| racters, might fix later.                                    |
-|                                                              |
 \______________________________________________________________/
                                                             \
                                                              \

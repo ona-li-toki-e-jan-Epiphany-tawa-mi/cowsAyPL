@@ -35,51 +35,32 @@
 
 
 
-⍝ Partitions a vector ⍵, splitting it, where the given value ⍺ is present, into
-⍝ a vector of vectors. The split value will not be present in the resulting
-⍝ subvectors.
-PARTITION_VOV←{⍺{⍵~⍺}¨⍵⊂⍨1++\⍺⍷⍵}
+⍝ Reads up to 5,000 bytes in from file descriptor ⍵ as a byte vector.
+FIO∆FREAD←{⎕FIO[6] ⍵}
+⍝ Returns non-zero if EOF was reached for file descriptor ⍵.
+FIO∆FEOF←{⎕FIO[10] ⍵}
+⍝ Returns non-zero if an error ocurred reading file descriptor ⍵.
+FIO∆FERROR←{⎕FIO[11] ⍵}
+⍝ Splits a vector ⍵, where the given value ⍺ is present, into a vector of
+⍝ vectors. The split value will not be present in the resulting subvectors.
+FIO∆SPLIT←{⍺{⍵~⍺}¨⍵⊂⍨1++\⍺⍷⍵}
 
-⍝ Matches a singular integer, with or without a minus sign, with any number of
-⍝ leading or trailing spaces.
-RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
-
-⍝ Attempts to convert a character vector to scalar integer. If the vector does
-⍝ not represent a valid integer, the default value will be returned instead.
-∇INTEGER←DEFAULT CVTI CVECTOR
-  CVECTOR←RE_MATCH_NUMBER ⎕RE CVECTOR ⍝ if CVECTOR is not a number, returns
-                                      ⍝ empty vector.
-  →(~×⍴CVECTOR) ↓ L_A_NUMBER L_NOT_A_NUMBER
-  L_A_NUMBER:     INTEGER←⍎CVECTOR ◊ →L_END_IF
-  L_NOT_A_NUMBER: INTEGER←DEFAULT  ◊ →L_END_IF
-  L_END_IF:
-∇
-
-⍝ The file handle for stdin for working with ⎕FIO.
-FIO_STDIN←0
-⍝ Zb ← ⎕FIO[6] Bh    fread(Zi, 1, 5000, Bh) 1 byte per Zb.
-⍝ ⎕FIO function. Reads up to 5000 bytes from the given handle and outputs them
-⍝ as a byte vector.
-FIO_FREAD←6
-⍝ Zi ← ⎕FIO[10] Bh    feof(Bh).
-⍝ ⎕FIO function. Checks the end-of-file flag of the handle, returning non-zero
-⍝ if it is set.
-FIO_FEOF←10
-⍝ The numerical value of a line feed character.
-FIO_LINE_FEED←10
-
-⍝ TODO see if unicode characters can be added together to make ⎕UCS convert them
-⍝ something and may have to do with this function.
-⍝ properly.
+⍝ The file descriptor for stdin.
+FIO∆STDIN←0
 ⍝ Reads input from stdin until EOF is reached and outputs the contents as a
 ⍝ vector of character vectors, each vector representing a line.
-∇CCVECTOR←STDIN
-  CCVECTOR←⍬
-  L_READ_LOOP:
-    CCVECTOR←CCVECTOR,(⎕FIO[FIO_FREAD] FIO_STDIN)
-    →(0≢(⎕FIO[FIO_FEOF] FIO_STDIN)) ↓ L_READ_LOOP L_EOF
-  L_EOF:
-  CCVECTOR←⎕UCS¨ FIO_LINE_FEED PARTITION_VOV CCVECTOR
+∇LINES←FIO∆READ_ENTIRE_STDIN
+  LINES←⍬
+
+  LREAD_LOOP:
+    LINES←LINES,FIO∆FREAD FIO∆STDIN
+    →(0≢FIO∆FEOF   FIO∆STDIN) ⍴ LEND_READ_LOOP
+    →(0≢FIO∆FERROR FIO∆STDIN) ⍴ LEND_READ_LOOP
+    →LREAD_LOOP
+  LEND_READ_LOOP:
+
+  ⍝ {19 ⎕CR ⎕UCS ⍵} converts the input from FIO∆FREAD into a UTF-8 string.
+  LINES←(↑"\n") FIO∆SPLIT 19 ⎕CR ⎕UCS LINES
 ∇
 
 
@@ -90,12 +71,9 @@ Usages:
   ./cowsay.apl [options...] [TEXT...]
   apl --script ahd.apl -- [options...] [TEXT...]
 
-Prints out ASCII art of a cow saying the supplied TEXT within a speech bubble.
-If no TEXT is supplied as arguments to the function, it will instead be pulled
-from stdin until an EOF is reached.
-
-Currently cowsaypl cannot print out Unicode characters. might fix at a later
-date.
+Prints out text art of a cow saying the supplied TEXT within a speech bubble. If
+no TEXT is supplied as arguments to the function, it will instead be pulled from
+stdin until an EOF is reached.
 
 Options:
   +h
@@ -150,6 +128,21 @@ ARGUMENT_TEXT←⍬
 EYES←"oo"
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
 TOUNGE←"  "
+
+⍝ Matches a singular integer, with or without a minus sign, with any number of
+⍝ leading or trailing spaces.
+RE_MATCH_NUMBER←'^\s*-?[0-9]+\s*$'
+
+⍝ Attempts to convert a character vector to scalar integer. If the vector does
+⍝ not represent a valid integer, the default value will be returned instead.
+∇INTEGER←DEFAULT CVTI CVECTOR
+  CVECTOR←RE_MATCH_NUMBER ⎕RE CVECTOR ⍝ if CVECTOR is not a number, returns
+                                      ⍝ empty vector.
+  →(~×⍴CVECTOR) ↓ L_A_NUMBER L_NOT_A_NUMBER
+  L_A_NUMBER:     INTEGER←⍎CVECTOR ◊ →L_END_IF
+  L_NOT_A_NUMBER: INTEGER←DEFAULT  ◊ →L_END_IF
+  L_END_IF:
+∇
 
 ⍝ Parses the arguments supplied from the command line and updates the preceeding
 ⍝ variable(s) accordingly.
@@ -278,7 +271,7 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   ⍝ vectors, with each subvector being a line of text.
   →(0≡≢ARGUMENT_TEXT) ↓ L_USE_ARGUMENT_TEXT L_USE_STDIN
   L_USE_ARGUMENT_TEXT: TEXT←{⍺,' ',⍵}/ARGUMENT_TEXT ◊ →L_END_IF
-  L_USE_STDIN:         TEXT←STDIN                   ◊ →L_END_IF
+  L_USE_STDIN:         TEXT←FIO∆READ_ENTIRE_STDIN   ◊ →L_END_IF
   L_END_IF:
 
   ⍝ If DISABLE_WORD_WRAP≡1, the maximum width will be the width of the longest
