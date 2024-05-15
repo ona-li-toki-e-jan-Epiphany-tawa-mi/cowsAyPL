@@ -110,7 +110,7 @@ Options:
   +y
     Young. Appearance preset. Incompatible with +e EYES and other presets.
 """
-ARGS∆VERSION←"cowsaypl 1.1.0"
+ARGS∆VERSION←"cowsaypl 1.2.0"
 
 ⍝ Whether the program should end after the argument parsing is done. This may be
 ⍝ because of it outputting help information, an error with the input, or some
