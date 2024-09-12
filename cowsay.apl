@@ -33,35 +33,8 @@
 ⍝                        ||----w |
 ⍝                        ||     ||
 
-
-
-⍝ Reads up to 5,000 bytes in from file descriptor ⍵ as a byte vector.
-FIO∆FREAD←{⎕FIO[6] ⍵}
-⍝ Returns non-zero if EOF was reached for file descriptor ⍵.
-FIO∆FEOF←{⎕FIO[10] ⍵}
-⍝ Returns non-zero if an error ocurred reading file descriptor ⍵.
-FIO∆FERROR←{⎕FIO[11] ⍵}
-⍝ Splits a vector ⍵, where the given value ⍺ is present, into a vector of
-⍝ vectors. The split value will not be present in the resulting subvectors.
-FIO∆SPLIT←{⍺{⍵~⍺}¨⍵⊂⍨1++\⍺⍷⍵}
-
-⍝ The file descriptor for stdin.
-FIO∆STDIN←0
-⍝ Reads input from stdin until EOF is reached and outputs the contents as a
-⍝ vector of character vectors, each vector representing a line.
-∇LINES←FIO∆READ_ENTIRE_STDIN
-  LINES←⍬
-
-  LREAD_LOOP:
-    LINES←LINES,FIO∆FREAD FIO∆STDIN
-    →(0≢FIO∆FEOF   FIO∆STDIN) ⍴ LEND_READ_LOOP
-    →(0≢FIO∆FERROR FIO∆STDIN) ⍴ LEND_READ_LOOP
-    →LREAD_LOOP
-  LEND_READ_LOOP:
-
-  ⍝ {19 ⎕CR ⎕UCS ⍵} converts the input from FIO∆FREAD into a UTF-8 string.
-  LINES←(↑"\n") FIO∆SPLIT 19 ⎕CR ⎕UCS LINES
-∇
+⊣ ⍎")COPY_ONCE fio.apl"
+⊣ ⍎")COPY_ONCE logging.apl"
 
 
 
@@ -84,10 +57,6 @@ ARGS∆EYES←"oo"
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
 ARGS∆TOUNGE←"  "
 
-⍝ Whether the program should end after the argument parsing is done. This may be
-⍝ because of it outputting help information, an error with the input, or some
-⍝ other reason.
-ARGS∆ABORT←0
 ⍝ Whether "++" was encountered, meaning all following option-like arguments are
 ⍝ to be treated as files.
 ARGS∆END_OF_OPTIONS←0
@@ -96,6 +65,12 @@ ARGS∆END_OF_OPTIONS←0
 ARGS∆EXPECT_WIDTH←0
 ARGS∆EXPECT_EYES←0
 ARGS∆EXPECT_TOUNGE←0
+
+⍝ Displays a short help message.
+∇ARGS∆DISPLAY_SHORT_HELP
+  ⍞←"Try '",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
+  ⍞←"Try '",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
+∇
 
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
@@ -153,37 +128,27 @@ ARGS∆EXPECT_TOUNGE←0
 ∇ARGS∆PARSE_OPTION OPTION
   →({OPTION≡⍵}¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / LHELP LVERSION LSET_WIDTH LNO_WORD_WRAP LSET_EYES LSET_TOUNGE LBORG_MODE LDEAD LGREEDY LPARANOID LSTONED LTIRED LWIRED LYOUTHFUL
   LDEFAULT:
-    ⍞←"Error: unknown option '+",OPTION,"'\nTry 'cowsaypl +h' for more information\n"
-    ARGS∆ABORT←1 ◊ →LSWITCH_END
-  LHELP:
-    ARGS∆DISPLAY_HELP
-    ARGS∆ABORT←1 ◊ →LSWITCH_END
-  LVERSION:
-    ARGS∆DISPLAY_VERSION
-    ARGS∆ABORT←1 ◊ →LSWITCH_END
-  LSET_WIDTH:    ARGS∆EXPECT_WIDTH←1  ◊ →LSWITCH_END
-  LNO_WORD_WRAP: ARGS∆NO_WORD_WRAP←1  ◊ →LSWITCH_END
-  LSET_EYES:     ARGS∆EXPECT_EYES←1   ◊ →LSWITCH_END
-  LSET_TOUNGE:   ARGS∆EXPECT_TOUNGE←1 ◊ →LSWITCH_END
-  LBORG_MODE:    ARGS∆EYES←"=="       ◊ →LSWITCH_END
-  LDEAD:
-    ARGS∆EYES←"XX" ◊ ARGS∆TOUNGE←"U "
-    →LSWITCH_END
-  LGREEDY:       ARGS∆EYES←"$$"       ◊ →LSWITCH_END
-  LPARANOID:     ARGS∆EYES←"@@"       ◊ →LSWITCH_END
-  LSTONED:
-    ARGS∆EYES←"**" ◊ ARGS∆TOUNGE←"U "
-    →LSWITCH_END
-  LTIRED:        ARGS∆EYES←"--"       ◊ →LSWITCH_END
-  LWIRED:        ARGS∆EYES←"OO"       ◊ →LSWITCH_END
-  LYOUTHFUL:     ARGS∆EYES←".."       ◊ →LSWITCH_END
+    ARGS∆DISPLAY_SHORT_HELP
+    PANIC "unknown option '+",OPTION,"'"
+  LHELP:         ARGS∆DISPLAY_HELP    ◊ ⍎")OFF"    ◊ →LSWITCH_END
+  LVERSION:      ARGS∆DISPLAY_VERSION ◊ ⍎")OFF"    ◊ →LSWITCH_END
+  LSET_WIDTH:    ARGS∆EXPECT_WIDTH←1               ◊ →LSWITCH_END
+  LNO_WORD_WRAP: ARGS∆NO_WORD_WRAP←1               ◊ →LSWITCH_END
+  LSET_EYES:     ARGS∆EXPECT_EYES←1                ◊ →LSWITCH_END
+  LSET_TOUNGE:   ARGS∆EXPECT_TOUNGE←1              ◊ →LSWITCH_END
+  LBORG_MODE:    ARGS∆EYES←"=="                    ◊ →LSWITCH_END
+  LDEAD:         ARGS∆EYES←"XX" ◊ ARGS∆TOUNGE←"U " ◊ →LSWITCH_END
+  LGREEDY:       ARGS∆EYES←"$$"                    ◊ →LSWITCH_END
+  LPARANOID:     ARGS∆EYES←"@@"                    ◊ →LSWITCH_END
+  LSTONED:       ARGS∆EYES←"**" ◊ ARGS∆TOUNGE←"U " ◊ →LSWITCH_END
+  LTIRED:        ARGS∆EYES←"--"                    ◊ →LSWITCH_END
+  LWIRED:        ARGS∆EYES←"OO"                    ◊ →LSWITCH_END
+  LYOUTHFUL:     ARGS∆EYES←".."                    ◊ →LSWITCH_END
   LSWITCH_END:
 ∇
 
 ⍝ Parses a single character vector ARGUMENT and updates ARGS∆* accordingly.
 ∇ARGS∆PARSE_ARG ARGUMENT
-  →ARGS∆ABORT ⍴ LABORT
-
   ⍝ If "++" was encountered, everything is text.
   →ARGS∆END_OF_OPTIONS ⍴ LTEXT
   ⍝ Handles arguments to options with arguments.
@@ -197,28 +162,26 @@ ARGS∆EXPECT_TOUNGE←0
   LDOUBLE_PLUS: ARGS∆END_OF_OPTIONS←1          ◊ →LSWITCH_END
   LSET_WIDTH:
     →(∨/ARGUMENT∊"0123456789") ⍴ LVALID_WIDTH
-      ⍞←"Error: invalid argument '",ARGUMENT,"' for option '+W': expected a whole number\nTry 'cowsaypl +h' for more information\n"
-      ARGS∆ABORT←1 ◊ →LSWITCH_END
+      ARGS∆DISPLAY_SHORT_HELP
+      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+W': expected a whole number"
     LVALID_WIDTH:
       ARGS∆WIDTH←⍎ARGUMENT
       ARGS∆EXPECT_WIDTH←0 ◊ →LSWITCH_END
   LSET_EYES:
     →(2≡≢ARGUMENT) ⍴ LVALID_EYES
-      ⍞←"Error: invalid argument '",ARGUMENT,"' for option '+e': expected a string of length 2\nTry 'cowsaypl +h' for more information\n"
-      ARGS∆ABORT←1 ◊ →LSWITCH_END
+      ARGS∆DISPLAY_SHORT_HELP
+      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+e': expected a string of length 2"
     LVALID_EYES:
       ARGS∆EYES←ARGUMENT
       ARGS∆EXPECT_EYES←0 ◊ →LSWITCH_END
   LSET_TOUNGE:
     →(2≡≢ARGUMENT) ⍴ LVALID_TOUNGE
-      ⍞←"Error: invalid argument '",ARGUMENT,"' for option '+T': expected a string of length 2\nTry 'cowsaypl +h' for more information\n"
-      ARGS∆ABORT←1 ◊ →LSWITCH_END
+      ARGS∆DISPLAY_SHORT_HELP
+      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+T': expected a string of length 2"
     LVALID_TOUNGE:
       ARGS∆TOUNGE←ARGUMENT
       ARGS∆EXPECT_TOUNGE←0 ◊ →LSWITCH_END
   LSWITCH_END:
-
-LABORT:
 ∇
 
 ⍝ Parses a vector of character vectors ARGUMENTS and updates ARGS∆* accordingly.
@@ -231,8 +194,6 @@ LABORT:
     ARGS∆PARSE_ARG¨ 4↓ARGUMENTS
   LNO_ARGUMENTS:
 
-  →ARGS∆ABORT ⍴ LABORT
-
   ⍝ Tests for any options with arguments that were not supplied an argument.
   →(~∨/ARGS∆EXPECT_WIDTH ARGS∆EXPECT_EYES ARGS∆EXPECT_TOUNGE) ⍴ LNO_INVALID_OPTIONS
   →ARGS∆EXPECT_WIDTH ARGS∆EXPECT_EYES ARGS∆EXPECT_TOUNGE / LSET_WIDTH LSET_EYES LSET_TOUNGE
@@ -240,11 +201,9 @@ LABORT:
   LSET_EYES:   INVALID_OPTION←"e" ◊ →LSWITCH_END
   LSET_TOUNGE: INVALID_OPTION←"T" ◊ →LSWITCH_END
   LSWITCH_END:
-    ⍞←"Error: expected argument for option '+",INVALID_OPTION,"'\nTry 'cowsaypl +h' for more information\n"
-    ARGS∆ABORT←1
+    ARGS∆DISPLAY_SHORT_HELP
+    PANIC "Error: expected argument for option '+",INVALID_OPTION,"'"
   LNO_INVALID_OPTIONS:
-
-LABORT:
 ∇
 
 
@@ -260,14 +219,13 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
 
 ∇MAIN; TEXT;WIDTH
   ARGS∆PARSE_ARGS ⎕ARG
-  →ARGS∆ABORT ⍴ LABORT
 
   ⍝ Gets the TEXT to go in text bubble, resulting in a vector of character
   ⍝ vectors, with each subvector being a line of text.
   →(0≡≢ARGS∆TEXT) ⍴ LUSE_STDIN
     TEXT←{⍺,' ',⍵}/ARGS∆TEXT ◊ →LDONT_USE_STDIN
   LUSE_STDIN:
-    TEXT←FIO∆READ_ENTIRE_STDIN
+    TEXT←FIO∆READ_ENTIRE_FD FIO∆STDIN
   LDONT_USE_STDIN:
 
   ⍝ If ARGS∆NO_WORD_WRAP≡1, the maximum width will be the width of the longest
@@ -277,8 +235,6 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   ⍞←BUBBLIFY WIDTH SLICE_TEXT TEXT
   ⍝ cow.
   ⍞←{⍵,⍨' '⍴⍨WIDTH,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',ARGS∆EYES,')\_______') ('   (__)\       )\/\') ('    ',ARGS∆TOUNGE,' ||----w |') ('       ||     ||')
-
-LABORT:
 ∇
 MAIN
 
