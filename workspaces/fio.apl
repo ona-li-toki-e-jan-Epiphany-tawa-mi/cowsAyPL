@@ -208,9 +208,20 @@ FIO∆JOIN_PATHS←{⍺,'/',⍵}
 ⍝ non-zero if an error occured.
 FIO∆MKDIRS←{(0 7 5 5) FIO∆MKDIRS_MODE ⍵}
 
+⍝ Replaces all instances of a character sequence in a character vector with
+⍝ another one.
+⍝ →MATCH_REPLACEMENT - A two-element nested array of character vectors, the
+⍝ first being the vector to match, and the second being the replacement.
+∇RESULT←MATCH_REPLACEMENT FIO∆CVECTOR_REPLACE CHARACTER_VECTOR; MATCH;REPLACEMENT
+  MATCH←↑MATCH_REPLACEMENT[1]
+  REPLACEMENT←↑MATCH_REPLACEMENT[2]
+
+  RESULT←∊CHARACTER_VECTOR{(⍺ REPLACEMENT)[1+⍵]}¨CHARACTER_VECTOR∊MATCH
+∇
+
 ⍝ Escapes the given shell argument with quotes. Intended for use with
 ⍝ FIO∆POPEN_{READ,WRITE}
-FIO∆ESCAPE_SHELL_ARGUMENT←{"'","'",⍨∊⍵{(⍺ "'\\''")[1+⍵]}¨⍵∊"'"}
+FIO∆ESCAPE_SHELL_ARGUMENT←{"'","'",⍨ ⍵ FIO∆CVECTOR_REPLACE⍨ "'" "'\\''"}
 
 
 

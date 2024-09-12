@@ -63,6 +63,33 @@
                                                                    ||     ||
 ```
 
+## How to test
+
+```
+/¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
+| Get the dependencies as specified in the `How to run` sectio |
+| n.                                                           |
+|                                                              |
+| Then, run one of the following commands:                     |
+|                                                              |
+| ./test.apl -- test tests/sources tests/outputs               |
+| apl --script test.apl -- test tests/sources tests/outputs    |
+|                                                              |
+| If breaking changes are desired, regenerate the test cases w |
+| ith one of the following commands:                           |
+|                                                              |
+| ./test.apl -- record tests/sources tests/outputs             |
+| apl --script test.apl -- record tests/sources tests/outputs  |
+\______________________________________________________________/
+                                                            \
+                                                             \
+                                                               ^__^
+                                                               (OO)\_______
+                                                               (__)\       )\/\
+                                                                   ||----w |
+                                                                   ||     ||
+```
+
 ## Installation
 
 ```
