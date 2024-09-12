@@ -34,6 +34,7 @@
 ⍝                        ||     ||
 
 ⊣ ⍎")COPY_ONCE fio.apl"
+⊣ ⍎")COPY_ONCE logging.apl"
 
 
 
@@ -68,6 +69,12 @@ ARGS∆END_OF_OPTIONS←0
 ARGS∆EXPECT_WIDTH←0
 ARGS∆EXPECT_EYES←0
 ARGS∆EXPECT_TOUNGE←0
+
+⍝ Displays a short help message.
+∇ARGS∆DISPLAY_SHORT_HELP
+  ⍞←"Try '",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
+  ⍞←"Try '",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
+∇
 
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
@@ -125,8 +132,8 @@ ARGS∆EXPECT_TOUNGE←0
 ∇ARGS∆PARSE_OPTION OPTION
   →({OPTION≡⍵}¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / LHELP LVERSION LSET_WIDTH LNO_WORD_WRAP LSET_EYES LSET_TOUNGE LBORG_MODE LDEAD LGREEDY LPARANOID LSTONED LTIRED LWIRED LYOUTHFUL
   LDEFAULT:
-    ⍞←"Error: unknown option '+",OPTION,"'\nTry 'cowsaypl +h' for more information\n"
-    ARGS∆ABORT←1 ◊ →LSWITCH_END
+    ARGS∆DISPLAY_SHORT_HELP
+    PANIC "unknown option '+",OPTION,"'"
   LHELP:
     ARGS∆DISPLAY_HELP
     ARGS∆ABORT←1 ◊ →LSWITCH_END
@@ -169,22 +176,22 @@ ARGS∆EXPECT_TOUNGE←0
   LDOUBLE_PLUS: ARGS∆END_OF_OPTIONS←1          ◊ →LSWITCH_END
   LSET_WIDTH:
     →(∨/ARGUMENT∊"0123456789") ⍴ LVALID_WIDTH
-      ⍞←"Error: invalid argument '",ARGUMENT,"' for option '+W': expected a whole number\nTry 'cowsaypl +h' for more information\n"
-      ARGS∆ABORT←1 ◊ →LSWITCH_END
+      ARGS∆DISPLAY_SHORT_HELP
+      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+W': expected a whole number"
     LVALID_WIDTH:
       ARGS∆WIDTH←⍎ARGUMENT
       ARGS∆EXPECT_WIDTH←0 ◊ →LSWITCH_END
   LSET_EYES:
     →(2≡≢ARGUMENT) ⍴ LVALID_EYES
-      ⍞←"Error: invalid argument '",ARGUMENT,"' for option '+e': expected a string of length 2\nTry 'cowsaypl +h' for more information\n"
-      ARGS∆ABORT←1 ◊ →LSWITCH_END
+      ARGS∆DISPLAY_SHORT_HELP
+      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+e': expected a string of length 2"
     LVALID_EYES:
       ARGS∆EYES←ARGUMENT
       ARGS∆EXPECT_EYES←0 ◊ →LSWITCH_END
   LSET_TOUNGE:
     →(2≡≢ARGUMENT) ⍴ LVALID_TOUNGE
-      ⍞←"Error: invalid argument '",ARGUMENT,"' for option '+T': expected a string of length 2\nTry 'cowsaypl +h' for more information\n"
-      ARGS∆ABORT←1 ◊ →LSWITCH_END
+      ARGS∆DISPLAY_SHORT_HELP
+      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+T': expected a string of length 2"
     LVALID_TOUNGE:
       ARGS∆TOUNGE←ARGUMENT
       ARGS∆EXPECT_TOUNGE←0 ◊ →LSWITCH_END
@@ -212,8 +219,8 @@ LABORT:
   LSET_EYES:   INVALID_OPTION←"e" ◊ →LSWITCH_END
   LSET_TOUNGE: INVALID_OPTION←"T" ◊ →LSWITCH_END
   LSWITCH_END:
-    ⍞←"Error: expected argument for option '+",INVALID_OPTION,"'\nTry 'cowsaypl +h' for more information\n"
-    ARGS∆ABORT←1
+    ARGS∆DISPLAY_SHORT_HELP
+    PANIC "Error: expected argument for option '+",INVALID_OPTION,"'"
   LNO_INVALID_OPTIONS:
 
 LABORT:
