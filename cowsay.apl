@@ -1,4 +1,4 @@
-#!/usr/bin/apl --script --
+#!/usr/local/bin/apl --script
 
 ⍝ MIT License
 ⍝
