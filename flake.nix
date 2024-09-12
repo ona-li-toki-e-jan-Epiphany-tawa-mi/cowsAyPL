@@ -23,25 +23,21 @@
 {
   description = "cowsAyPL development environment";
 
-  # We use nixpkgs-unstable since the NUR does as well.
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs }:
-    let
-      lib = nixpkgs.lib;
+    let inherit (nixpkgs.lib) systems genAttrs;
 
-      forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f {
-        pkgs = import nixpkgs { inherit system; };
-      });
-
-    in
-      {
-        devShells = forAllSystems ({ pkgs }: {
-          default = with pkgs; mkShell {
-            nativeBuildInputs = [
-              gnuapl
-            ];
-          };
+        forAllSystems = f: genAttrs systems.flakeExposed (system: f {
+          pkgs = import nixpkgs { inherit system; };
         });
-      };
-  }
+    in {
+      devShells = forAllSystems ({ pkgs }: {
+        default = with pkgs; mkShell {
+          nativeBuildInputs = [
+            gnuapl
+          ];
+        };
+      });
+    };
+}
