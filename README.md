@@ -50,8 +50,8 @@
 | Execute either of the following command(s) in the project di |
 | rectory to get started:                                      |
 |                                                              |
-| ./cowsay.apl [options..] [TEXT...]                           |
-| apl --script cowsay.apl -- [options...] [TEXT...]            |
+| ./cowsay.apl -- +h                                           |
+| apl --script cowsay.apl -- +h                                |
 |                                                              |
 \______________________________________________________________/
                                                             \
