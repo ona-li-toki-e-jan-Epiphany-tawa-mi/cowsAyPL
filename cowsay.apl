@@ -33,35 +33,7 @@
 ⍝                        ||----w |
 ⍝                        ||     ||
 
-
-
-⍝ Reads up to 5,000 bytes in from file descriptor ⍵ as a byte vector.
-FIO∆FREAD←{⎕FIO[6] ⍵}
-⍝ Returns non-zero if EOF was reached for file descriptor ⍵.
-FIO∆FEOF←{⎕FIO[10] ⍵}
-⍝ Returns non-zero if an error ocurred reading file descriptor ⍵.
-FIO∆FERROR←{⎕FIO[11] ⍵}
-⍝ Splits a vector ⍵, where the given value ⍺ is present, into a vector of
-⍝ vectors. The split value will not be present in the resulting subvectors.
-FIO∆SPLIT←{⍺{⍵~⍺}¨⍵⊂⍨1++\⍺⍷⍵}
-
-⍝ The file descriptor for stdin.
-FIO∆STDIN←0
-⍝ Reads input from stdin until EOF is reached and outputs the contents as a
-⍝ vector of character vectors, each vector representing a line.
-∇LINES←FIO∆READ_ENTIRE_STDIN
-  LINES←⍬
-
-  LREAD_LOOP:
-    LINES←LINES,FIO∆FREAD FIO∆STDIN
-    →(0≢FIO∆FEOF   FIO∆STDIN) ⍴ LEND_READ_LOOP
-    →(0≢FIO∆FERROR FIO∆STDIN) ⍴ LEND_READ_LOOP
-    →LREAD_LOOP
-  LEND_READ_LOOP:
-
-  ⍝ {19 ⎕CR ⎕UCS ⍵} converts the input from FIO∆FREAD into a UTF-8 string.
-  LINES←(↑"\n") FIO∆SPLIT 19 ⎕CR ⎕UCS LINES
-∇
+⊣ ⍎")COPY_ONCE fio.apl"
 
 
 
@@ -267,7 +239,7 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   →(0≡≢ARGS∆TEXT) ⍴ LUSE_STDIN
     TEXT←{⍺,' ',⍵}/ARGS∆TEXT ◊ →LDONT_USE_STDIN
   LUSE_STDIN:
-    TEXT←FIO∆READ_ENTIRE_STDIN
+    TEXT←FIO∆READ_ENTIRE_FD FIO∆STDIN
   LDONT_USE_STDIN:
 
   ⍝ If ARGS∆NO_WORD_WRAP≡1, the maximum width will be the width of the longest
