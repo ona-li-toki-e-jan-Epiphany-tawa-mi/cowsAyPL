@@ -65,60 +65,10 @@ FIO∆STDIN←0
 
 
 
-ARGS∆HELP←⊃"""
-Usages:
-  cowsaypl [options...] [TEXT...]
-  ./cowsay.apl [options...] [TEXT...]
-  apl --script ahd.apl -- [options...] [TEXT...]
-
-Prints out text art of a cow saying the supplied TEXT within a speech bubble. If
-no TEXT is supplied as arguments to the function, it will instead be pulled from
-stdin until an EOF is reached.
-
-Options:
-  +h
-    Displays this help message and exits.
-  +W WIDTH
-    Unsinged integer. Sets the maximum WIDTH of lines within the generated text
-    bubbles. Defaults to 40 Incompatible with +n.
-  +n
-    Prevents word wrapping. Width of the text bubble is the length of the
-    largest line from TEXT. Incompatible with +W.
-  +e EYES
-    Sets the string for the EYES, must be 2 characters long. Incompatible with
-    appearance presets.
-  +T TOUNGE
-    Sets the string for the TOUNGE, must be either 1 or 2 characters long. If
-    only 1 character is supplied a space will be appended to it. Incompatible
-    with a few appearance presets.
-  +b
-    Borg mode. Appearance preset. Incompatible with +e EYES and other presets.
-  +d
-    Dead. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other
-    presets.
-  +g
-    Greedy. Appearance preset. Incompatible with +e EYES and other presets.
-  +p
-    Paranoid. Appearance preset. Incompatible with +e EYES and other presets.
-  +s
-    Stoned. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other
-    presets.
-  +t
-    Tired. Appearance preset. Incompatible with +e EYES and other presets.
-  +w
-    Wired. Appearance preset. Incompatible with +e EYES and other presets
-  +y
-    Young. Appearance preset. Incompatible with +e EYES and other presets.
-"""
-ARGS∆VERSION←"cowsaypl 1.2.0"
-
-⍝ Whether the program should end after the argument parsing is done. This may be
-⍝ because of it outputting help information, an error with the input, or some
-⍝ other reason.
-ARGS∆ABORT←0
-⍝ Whether "++" was encountered, meaning all following option-like arguments are
-⍝ to be treated as files.
-ARGS∆END_OF_OPTIONS←0
+⍝ The path to the apl interpreter used to call this program.
+ARGS∆APL_PATH←⍬
+⍝ The name of this file/program.
+ARGS∆PROGRAM_NAME←⍬
 ⍝ The maximum width of the text in the text bubble. Any text over the limit will be
 ⍝ word-wrapped. May be ≤ 0.
 ARGS∆WIDTH←40
@@ -134,11 +84,69 @@ ARGS∆EYES←"oo"
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
 ARGS∆TOUNGE←"  "
 
+⍝ Whether the program should end after the argument parsing is done. This may be
+⍝ because of it outputting help information, an error with the input, or some
+⍝ other reason.
+ARGS∆ABORT←0
+⍝ Whether "++" was encountered, meaning all following option-like arguments are
+⍝ to be treated as files.
+ARGS∆END_OF_OPTIONS←0
 ⍝ For options with arguments. When set to 1, the next argument is evaluated as
 ⍝ the repsective option's argument.
 ARGS∆EXPECT_WIDTH←0
 ARGS∆EXPECT_EYES←0
 ARGS∆EXPECT_TOUNGE←0
+
+⍝ Displays help information.
+∇ARGS∆DISPLAY_HELP
+  ⍞←"Usages:\n"
+  ⍞←"  ",ARGS∆PROGRAM_NAME," -- [options...] [TEXT...]\n"
+  ⍞←"  ",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- [options...] [TEXT...]\n"
+  ⍞←"\n"
+  ⍞←"Prints out text art of a cow saying the supplied TEXT within a speech bubble. If\n"
+  ⍞←"no TEXT is supplied as arguments to the function, it will instead be pulled from\n"
+  ⍞←"stdin until an EOF is reached.\n"
+  ⍞←"\n"
+  ⍞←"Options:\n"
+  ⍞←"  +h\n"
+  ⍞←"    Displays this help message and exits.\n"
+  ⍞←"  +W WIDTH\n"
+  ⍞←"    Unsinged integer. Sets the maximum WIDTH of lines within the generated text\n"
+  ⍞←"    bubbles. Defaults to 40 Incompatible with +n.\n"
+  ⍞←"  +n\n"
+  ⍞←"    Prevents word wrapping. Width of the text bubble is the length of the\n"
+  ⍞←"    largest line from TEXT. Incompatible with +W.\n"
+  ⍞←"  +e EYES\n"
+  ⍞←"    Sets the string for the EYES, must be 2 characters long. Incompatible with\n"
+  ⍞←"    appearance presets.\n"
+  ⍞←"  +T TOUNGE\n"
+  ⍞←"    Sets the string for the TOUNGE, must be either 1 or 2 characters long. If\n"
+  ⍞←"    only 1 character is supplied a space will be appended to it. Incompatible\n"
+  ⍞←"    with a few appearance presets.\n"
+  ⍞←"  +b\n"
+  ⍞←"    Borg mode. Appearance preset. Incompatible with +e EYES and other presets.\n"
+  ⍞←"  +d\n"
+  ⍞←"    Dead. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other\n"
+  ⍞←"    presets.\n"
+  ⍞←"  +g\n"
+  ⍞←"    Greedy. Appearance preset. Incompatible with +e EYES and other presets.\n"
+  ⍞←"  +p\n"
+  ⍞←"    Paranoid. Appearance preset. Incompatible with +e EYES and other presets.\n"
+  ⍞←"  +s\n"
+  ⍞←"    Stoned. Appearance preset. Incompatible with +e EYES, +T TOUNGE, and other\n"
+  ⍞←"    presets.\n"
+  ⍞←"  +t\n"
+  ⍞←"    Tired. Appearance preset. Incompatible with +e EYES and other presets.\n"
+  ⍞←"  +w\n"
+  ⍞←"    Wired. Appearance preset. Incompatible with +e EYES and other presets\n"
+  ⍞←"  +y\n"
+  ⍞←"    Young. Appearance preset. Incompatible with +e EYES and other presets.\n"
+∇
+
+⍝ Displays the version.
+∇ARGS∆DISPLAY_VERSION
+  ⍞←"cowsaypl 1.2.0\n"
+∇
 
 ⍝ Parses an scalar character OPTION (anything after a "+") and updates ARGS∆*
 ⍝ accordingly.
@@ -148,10 +156,10 @@ ARGS∆EXPECT_TOUNGE←0
     ⍞←"Error: unknown option '+",OPTION,"'\nTry 'cowsaypl +h' for more information\n"
     ARGS∆ABORT←1 ◊ →LSWITCH_END
   LHELP:
-    ⍞←ARGS∆HELP
+    ARGS∆DISPLAY_HELP
     ARGS∆ABORT←1 ◊ →LSWITCH_END
   LVERSION:
-    ⍞←ARGS∆VERSION
+    ARGS∆DISPLAY_VERSION
     ARGS∆ABORT←1 ◊ →LSWITCH_END
   LSET_WIDTH:    ARGS∆EXPECT_WIDTH←1  ◊ →LSWITCH_END
   LNO_WORD_WRAP: ARGS∆NO_WORD_WRAP←1  ◊ →LSWITCH_END
@@ -215,7 +223,10 @@ LABORT:
 
 ⍝ Parses a vector of character vectors ARGUMENTS and updates ARGS∆* accordingly.
 ∇ARGS∆PARSE_ARGS ARGUMENTS; INVALID_OPTION
-  ⍝ ⎕ARG looks like "apl --script <script> --" plus whatever the user put.
+  ⍝ ⎕ARG looks like "apl --script <script> -- [user arguments...]"
+
+  ARGS∆APL_PATH←↑ARGUMENTS[1]
+  ARGS∆PROGRAM_NAME←↑ARGUMENTS[3]
   →(4≥≢ARGUMENTS) ⍴ LNO_ARGUMENTS
     ARGS∆PARSE_ARG¨ 4↓ARGUMENTS
   LNO_ARGUMENTS:
