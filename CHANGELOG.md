@@ -1,5 +1,8 @@
 # Changelog
 
+- Improved error handling.
+- Added integration testing.
+
 ## RELEASE-V1.2.0
 
 - Improved argument parsing. It can now handle mutiple options in a single row (i.e.: +bW 40).
