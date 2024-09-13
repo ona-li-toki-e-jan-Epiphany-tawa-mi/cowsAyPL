@@ -225,7 +225,7 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   →(0≡≢ARGS∆TEXT) ⍴ LUSE_STDIN
     TEXT←{⍺,' ',⍵}/ARGS∆TEXT ◊ →LDONT_USE_STDIN
   LUSE_STDIN:
-    TEXT←FIO∆READ_ENTIRE_FD FIO∆STDIN
+    TEXT←"\n" FIO∆SPLIT FIO∆BYTES_TO_UTF8 FIO∆READ_ENTIRE_FD FIO∆STDIN
   LDONT_USE_STDIN:
 
   ⍝ If ARGS∆NO_WORD_WRAP≡1, the maximum width will be the width of the longest
