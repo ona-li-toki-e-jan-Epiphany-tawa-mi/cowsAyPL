@@ -112,7 +112,7 @@
 ## Examples
 
 ```console
-$ ./cowsay.apl +b The only thing separating the gonks from the chooms is how chromed\'ya are
+$ ./cowsay.apl -- +b The only thing separating the gonks from the chooms is how chromed\'ya are
 /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
 | The only thing separating the gonks from |
 |  the chooms is how chromed'ya are        |
@@ -142,7 +142,7 @@ $ apl --script cowsay.apl -- +e "()" +T \(\) +W 19 "We are become one. Flesh in 
 ```
 
 ```console
-$ cat LICENSE | ./cowsay.apl +n +p
+$ cat LICENSE | ./cowsay.apl -- +n +p
 /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
 | MIT License                                                                    |
 |                                                                                |
