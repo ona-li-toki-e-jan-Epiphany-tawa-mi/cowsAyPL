@@ -120,7 +120,7 @@ ARGS∆EXPECT_TOUNGE←0
 
 ⍝ Displays the version.
 ∇ARGS∆DISPLAY_VERSION
-  ⍞←"cowsaypl 1.2.1\n"
+  ⍞←"cowsaypl 1.2.2\n"
 ∇
 
 ⍝ Parses an scalar character OPTION (anything after a "+") and updates ARGS∆*
