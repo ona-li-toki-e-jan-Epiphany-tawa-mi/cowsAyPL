@@ -1,28 +1,20 @@
 #!/usr/local/bin/apl --script
 
-⍝ This file is a modified copy of test.apl from AHD, which you can find at one
-⍝ of the following links:
-⍝ - I2P: http://oytjumugnwsf4g72vemtamo72vfvgmp4lfsf6wmggcvba3qmcsta.b32.i2p/cgit/AHD.git/about
-⍝ - Tor: http://4blcq4arxhbkc77tfrtmy4pptf55gjbhlj32rbfyskl672v2plsmjcyd.onion/cgit/AHD.git/about
-⍝ - Clearnet: https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/AHD
-⍝
-⍝ ==============================================================================
-⍝
-⍝ This file is part of AHD.
+⍝ This file is part of cowsAyPL.
 ⍝
 ⍝ Copyright (c) 2024 ona-li-toki-e-jan-Epiphany-tawa-mi
 ⍝
-⍝ AHD is free software: you can redistribute it and/or modify it under the terms
-⍝ of the GNU General Public License as published by the Free Software
+⍝ cowsAyPL is free software: you can redistribute it and/or modify it under the
+⍝ terms of the GNU General Public License as published by the Free Software
 ⍝ Foundation, either version 3 of the License, or (at your option) any later
 ⍝ version.
 ⍝
-⍝ AHD is distributed in the hope that it will be useful, but WITHOUT ANY
+⍝ cowsAyPL is distributed in the hope that it will be useful, but WITHOUT ANY
 ⍝ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ⍝ A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 ⍝
 ⍝ You should have received a copy of the GNU General Public License along with
-⍝ AHD. If not, see <https://www.gnu.org/licenses/>.
+⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
 ⍝ cowsAyPL integration testing script.
 

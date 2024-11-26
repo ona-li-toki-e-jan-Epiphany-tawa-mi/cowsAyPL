@@ -3,6 +3,7 @@
 ## Upcoming
 
 - Updated fio.apl library.
+- Relicensed as GPLv3+.
 
 ## RELEASE-V1.2.2
 
