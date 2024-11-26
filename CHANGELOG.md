@@ -1,5 +1,11 @@
 # Changelog
 
+## Upcoming
+
+- Updated fio.apl library.
+
+## RELEASE-V1.2.2
+
 - Fixed bug with reading from stdin resuting in numbers being printed.
 - Updated fio.apl library.
 
