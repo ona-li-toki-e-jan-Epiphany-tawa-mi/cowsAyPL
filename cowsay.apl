@@ -117,7 +117,7 @@ ARGS∆EXPECT_TOUNGE←0
 ⍝ TODO make accept fd.
 ⍝ Displays the version.
 ∇ARGS∆DISPLAY_VERSION
-  ⍞←"cowsaypl 1.2.2\n"
+  ⍞←"cowsaypl 1.2.3\n"
 ∇
 
 ⍝ Parses an scalar character OPTION (anything after a "+") and updates ARGS∆*

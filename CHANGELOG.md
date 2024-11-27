@@ -1,6 +1,6 @@
 # Changelog
 
-## Upcoming
+## RELEASE-V1.2.3
 
 - Updated fio.apl library.
 - Relicensed as GPLv3+.
