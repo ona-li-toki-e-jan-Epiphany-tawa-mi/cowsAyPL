@@ -1,26 +1,20 @@
 #!/usr/local/bin/apl --script
 
-⍝ MIT License
+⍝ This file is part of cowsAyPL.
 ⍝
-⍝ Copyright (c) 2022-2024 ona-li-toki-e-jan-Epiphany-tawa-mi
+⍝ Copyright (c) 2024 ona-li-toki-e-jan-Epiphany-tawa-mi
 ⍝
-⍝ Permission is hereby granted, free of charge, to any person obtaining a copy
-⍝ of this software and associated documentation files (the "Software"), to
-⍝ deal in the Software without restriction, including without limitation the
-⍝ rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-⍝ sell copies of the Software, and to permit persons to whom the Software is
-⍝ furnished to do so, subject to the following conditions:
+⍝ cowsAyPL is free software: you can redistribute it and/or modify it under the
+⍝ terms of the GNU General Public License as published by the Free Software
+⍝ Foundation, either version 3 of the License, or (at your option) any later
+⍝ version.
 ⍝
-⍝ The above copyright notice and this permission notice shall be included in
-⍝ all copies or substantial portions of the Software.
+⍝ cowsAyPL is distributed in the hope that it will be useful, but WITHOUT ANY
+⍝ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+⍝ A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 ⍝
-⍝ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-⍝ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-⍝ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-⍝ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-⍝ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-⍝ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-⍝ IN THE SOFTWARE.
+⍝ You should have received a copy of the GNU General Public License along with
+⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
 ⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
 ⍝ | Cowsay in GnuAPL |
@@ -66,12 +60,14 @@ ARGS∆EXPECT_WIDTH←0
 ARGS∆EXPECT_EYES←0
 ARGS∆EXPECT_TOUNGE←0
 
+⍝ TODO make accept fd.
 ⍝ Displays a short help message.
 ∇ARGS∆DISPLAY_SHORT_HELP
   ⍞←"Try '",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
   ⍞←"Try '",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
 ∇
 
+⍝ TODO make accept fd.
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
   ⍞←"Usages:\n"
@@ -118,6 +114,7 @@ ARGS∆EXPECT_TOUNGE←0
   ⍞←"    Young. Appearance preset. Incompatible with +e EYES and other presets.\n"
 ∇
 
+⍝ TODO make accept fd.
 ⍝ Displays the version.
 ∇ARGS∆DISPLAY_VERSION
   ⍞←"cowsaypl 1.2.2\n"
@@ -126,10 +123,11 @@ ARGS∆EXPECT_TOUNGE←0
 ⍝ Parses an scalar character OPTION (anything after a "+") and updates ARGS∆*
 ⍝ accordingly.
 ∇ARGS∆PARSE_OPTION OPTION
-  →({OPTION≡⍵}¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / LHELP LVERSION LSET_WIDTH LNO_WORD_WRAP LSET_EYES LSET_TOUNGE LBORG_MODE LDEAD LGREEDY LPARANOID LSTONED LTIRED LWIRED LYOUTHFUL
+  →(OPTION≡¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / LHELP LVERSION LSET_WIDTH LNO_WORD_WRAP LSET_EYES LSET_TOUNGE LBORG_MODE LDEAD LGREEDY LPARANOID LSTONED LTIRED LWIRED LYOUTHFUL
   LDEFAULT:
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" OPTION
     ARGS∆DISPLAY_SHORT_HELP
-    PANIC "unknown option '+",OPTION,"'"
+    ⍎")OFF 1"
   LHELP:         ARGS∆DISPLAY_HELP    ◊ ⍎")OFF"    ◊ →LSWITCH_END
   LVERSION:      ARGS∆DISPLAY_VERSION ◊ ⍎")OFF"    ◊ →LSWITCH_END
   LSET_WIDTH:    ARGS∆EXPECT_WIDTH←1               ◊ →LSWITCH_END
@@ -162,22 +160,25 @@ ARGS∆EXPECT_TOUNGE←0
   LDOUBLE_PLUS: ARGS∆END_OF_OPTIONS←1          ◊ →LSWITCH_END
   LSET_WIDTH:
     →(∨/ARGUMENT∊"0123456789") ⍴ LVALID_WIDTH
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+W': expected a whole number\n" ARGUMENT
       ARGS∆DISPLAY_SHORT_HELP
-      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+W': expected a whole number"
+      ⍎")OFF 1"
     LVALID_WIDTH:
       ARGS∆WIDTH←⍎ARGUMENT
       ARGS∆EXPECT_WIDTH←0 ◊ →LSWITCH_END
   LSET_EYES:
     →(2≡≢ARGUMENT) ⍴ LVALID_EYES
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+e': expected a string of length 2\n" ARGUMENT
       ARGS∆DISPLAY_SHORT_HELP
-      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+e': expected a string of length 2"
+      ⍎")OFF 1"
     LVALID_EYES:
       ARGS∆EYES←ARGUMENT
       ARGS∆EXPECT_EYES←0 ◊ →LSWITCH_END
   LSET_TOUNGE:
     →(2≡≢ARGUMENT) ⍴ LVALID_TOUNGE
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+T': expected a string of length 2\n" ARGUMENT
       ARGS∆DISPLAY_SHORT_HELP
-      PANIC "Error: invalid argument '",ARGUMENT,"' for option '+T': expected a string of length 2"
+      ⍎")OFF 1"
     LVALID_TOUNGE:
       ARGS∆TOUNGE←ARGUMENT
       ARGS∆EXPECT_TOUNGE←0 ◊ →LSWITCH_END
@@ -201,8 +202,9 @@ ARGS∆EXPECT_TOUNGE←0
   LSET_EYES:   INVALID_OPTION←"e" ◊ →LSWITCH_END
   LSET_TOUNGE: INVALID_OPTION←"T" ◊ →LSWITCH_END
   LSWITCH_END:
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: expected argument for option for option '+%s'\n" INVALID_OPTION
     ARGS∆DISPLAY_SHORT_HELP
-    PANIC "Error: expected argument for option '+",INVALID_OPTION,"'"
+    ⍎")OFF 1"
   LNO_INVALID_OPTIONS:
 ∇
 
@@ -225,7 +227,11 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   →(0≡≢ARGS∆TEXT) ⍴ LUSE_STDIN
     TEXT←{⍺,' ',⍵}/ARGS∆TEXT ◊ →LDONT_USE_STDIN
   LUSE_STDIN:
-    TEXT←"\n" FIO∆SPLIT FIO∆BYTES_TO_UTF8 FIO∆READ_ENTIRE_FD FIO∆STDIN
+    TEXT←FIO∆READ_ENTIRE_FD FIO∆STDIN
+    →(↑TEXT) ⍴ LREAD_SUCCESS
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read from stdin: %s" (↑1↓TEXT)
+    LREAD_SUCCESS:
+    TEXT←"\n" FIO∆SPLIT FIO∆BYTES_TO_UTF8 ↑1↓TEXT
   LDONT_USE_STDIN:
 
   ⍝ If ARGS∆NO_WORD_WRAP≡1, the maximum width will be the width of the longest
@@ -233,11 +239,9 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   WIDTH←↑(ARGS∆NO_WORD_WRAP+1)⌷{(⍵⌊1⌈ARGS∆WIDTH),⍵}⌈/≢¨TEXT
   ⍝ say.
   ⍞←BUBBLIFY WIDTH SLICE_TEXT TEXT
-  ⍝ cow.
+  ⍝ cow. TODO make cow not move to the right.
   ⍞←{⍵,⍨' '⍴⍨WIDTH,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',ARGS∆EYES,')\_______') ('   (__)\       )\/\') ('    ',ARGS∆TOUNGE,' ||----w |') ('       ||     ||')
 ∇
 MAIN
-
-
 
 )OFF

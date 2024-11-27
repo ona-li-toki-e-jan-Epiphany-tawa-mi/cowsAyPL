@@ -1,33 +1,24 @@
 #!/usr/local/bin/apl --script
 
-⍝ This file is a modified copy of test.apl from AHD, which you can find at one
-⍝ of the following links:
-⍝ - I2P: http://oytjumugnwsf4g72vemtamo72vfvgmp4lfsf6wmggcvba3qmcsta.b32.i2p/cgit/AHD.git/about
-⍝ - Tor: http://4blcq4arxhbkc77tfrtmy4pptf55gjbhlj32rbfyskl672v2plsmjcyd.onion/cgit/AHD.git/about
-⍝ - Clearnet: https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/AHD
-⍝
-⍝ ==============================================================================
-⍝
-⍝ This file is part of AHD.
+⍝ This file is part of cowsAyPL.
 ⍝
 ⍝ Copyright (c) 2024 ona-li-toki-e-jan-Epiphany-tawa-mi
 ⍝
-⍝ AHD is free software: you can redistribute it and/or modify it under the terms
-⍝ of the GNU General Public License as published by the Free Software
+⍝ cowsAyPL is free software: you can redistribute it and/or modify it under the
+⍝ terms of the GNU General Public License as published by the Free Software
 ⍝ Foundation, either version 3 of the License, or (at your option) any later
 ⍝ version.
 ⍝
-⍝ AHD is distributed in the hope that it will be useful, but WITHOUT ANY
+⍝ cowsAyPL is distributed in the hope that it will be useful, but WITHOUT ANY
 ⍝ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ⍝ A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 ⍝
 ⍝ You should have received a copy of the GNU General Public License along with
-⍝ AHD. If not, see <https://www.gnu.org/licenses/>.
+⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
 ⍝ cowsAyPL integration testing script.
 
 ⊣ ⍎")COPY_ONCE fio.apl"
-⊣ ⍎")COPY_ONCE logging.apl"
 
 
 
@@ -76,8 +67,9 @@ ARGS∆OUTPUTS_FOLDER←⍬
   ⍝ 4 for APL and it's arguments.
   ⍝ 3 for user arguments.
   →((3+4)≤≢ARGUMENTS) ⍴ LSUFFICIENT_ARGUMENTS
+    ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: insufficient arguments\n"
     ARGS∆DISPLAY_HELP
-    ⍞←"\n" ◊ PANIC "insufficient arguments"
+    ⍎")OFF 1"
   LSUFFICIENT_ARGUMENTS:
 
   ARGS∆ACTION←↑ARGUMENTS[5]
@@ -85,15 +77,18 @@ ARGS∆OUTPUTS_FOLDER←⍬
   ARGS∆OUTPUTS_FOLDER←↑ARGUMENTS[7]
 
   →((⊂ARGS∆ACTION)∊"record" "test") ⍴ LVALID_ACTION
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid action '%s'\n" ARGS∆ACTION
     ARGS∆DISPLAY_HELP
-    ⍞←"\n" ◊ PANIC "invalid action '",ARGS∆ACTION,"'"
+    ⍎")OFF 1"
   LVALID_ACTION:
 
   ⍝ Checks if sources folder exists and gets filenames.
   ARGS∆SOURCES_FILENAMES←FIO∆LIST_DIRECTORY ARGS∆SOURCES_FOLDER
-  →(¯2≢ARGS∆SOURCES_FILENAMES) ⍴ LSOURCES_FOLDER_EXISTS
-    PANIC "sources folder '",ARGS∆SOURCES_FOLDER,"' does not exist"
+  →(↑ARGS∆SOURCES_FILENAMES) ⍴ LSOURCES_FOLDER_EXISTS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: sources folder '%s' does not exist\n" ARGS∆SOURCES_FOLDER
+    ⍎")OFF 1"
   LSOURCES_FOLDER_EXISTS:
+  ARGS∆SOURCES_FILENAMES←↑1↓ARGS∆SOURCES_FILENAMES
 ∇
 
 
@@ -103,42 +98,51 @@ ARGS∆OUTPUTS_FOLDER←⍬
 ⍝ cowsAyPL.
 ⍝ ←The resulting output.
 ∇OUTPUT←RUN_COWSAY ARGUMENTS; COWSAY_FD;COMMAND;CURRENT_TIME_MS
-  COMMAND←ARGS∆APL_PATH," --script cowsay.apl -- ",↑{⍺," ",⍵}/ FIO∆ESCAPE_SHELL_ARGUMENT¨ ARGUMENTS
-  ⍞←"Running '",COMMAND,"'...\n"
+  COMMAND←ARGUMENTS,⍨ARGS∆APL_PATH "--script" "cowsay.apl" "--"
+  ⊣ FIO∆PRINTF "Running '%s'...\n" (↑FIO∆JOIN_SHELL_ARGUMENTS/ COMMAND)
 
-  CURRENT_TIME_MS←FIO∆GET_TIME_OF_DAY 1000
+  CURRENT_TIME_MS←↑1↓FIO∆TIME_MS
 
   COWSAY_FD←FIO∆POPEN_READ COMMAND
-  →(0≢COWSAY_FD) ⍴ LSUCCESS
-    PANIC "failed to launch cowsAyPL"
+  →(↑COWSAY_FD) ⍴ LSUCCESS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: failed to launch cowsAyPL: %s\n" (↑1↓COWSAY_FD)
+    ⍎")OFF 1"
   LSUCCESS:
-  OUTPUT←FIO∆READ_ENTIRE_FD COWSAY_FD
+  COWSAY_FD←↑1↓COWSAY_FD
+  OUTPUT←↑1↓FIO∆READ_ENTIRE_FD COWSAY_FD
   ⊣ FIO∆PCLOSE COWSAY_FD
 
-  ⍞←"cowsAyPL took " ◊ ⍞←1000÷⍨CURRENT_TIME_MS-⍨ FIO∆GET_TIME_OF_DAY 1000 ◊ ⍞← " seconds\n"
+  ⊣ FIO∆PRINTF "cowsAyPL took %.2f seconds\n"  (1000÷⍨CURRENT_TIME_MS-⍨↑1↓FIO∆TIME_MS)
 ∇
 
-⍝ We can only send the text to cowsAyPL via command-line arguments with popen().
-⍝ This function does the preprocessing to the text of the source file so that it
-⍝ can be passed as an argument.
-⍝ →⍵ - the text as a byte vector.
-PREPROCESS_INPUT←{,/ ("\n" " ") FIO∆CVECTOR_REPLACE FIO∆BYTES_TO_UTF8 ⍵}
+⍝ We can only send the text to cowsAyPL via command-line arguments with
+⍝ FIO∆PEPEN_READ. This function does the preprocessing to the text of the source
+⍝ file so that it can be passed as an argument.
+⍝ →INPUT - the text as a byte vector.
+∇OUTPUT←PREPROCESS_INPUT INPUT
+  OUTPUT←FIO∆BYTES_TO_UTF8 INPUT
+  ⍝ Replace newlines with spaces.
+  OUTPUT←∊(OUTPUT,⍨⊂" ")[1+(⍳⍨OUTPUT)×~OUTPUT∊"\n"]
+∇
 
 
 
 ⍝ Opens, truncates, and writes data to a file.
 ⍝ →FILE_PATH - the file.
 ⍝ →BYTE_VECTOR - the data.
-∇BYTE_VECTOR WRITE_FILE FILE_PATH; FILE_DESCRIPTOR
-  ⍞←"Writing to '",FILE_PATH,"'...\n"
+∇BYTE_VECTOR WRITE_FILE FILE_PATH; FD
+  ⊣ FIO∆PRINTF "Writing to '%s'...\n" FILE_PATH
 
-  FILE_DESCRIPTOR←"w" FIO∆FOPEN FILE_PATH
-  →(0<FILE_DESCRIPTOR) ⍴ LSUCCESS
-    PANIC "failed to open file '",FILE_PATH,"' for writing"
+  FD←"w" FIO∆OPEN_FILE FILE_PATH
+  →(↑FD) ⍴ LSUCCESS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: failed to open file '%s' for writing: %s" FILE_PATH (↑1↓FD)
+    ⍎")OFF 1"
   LSUCCESS:
-  ⊣ BYTE_VECTOR FIO∆FWRITE FILE_DESCRIPTOR
+  FD←↑1↓FD
 
-  ⊣ FIO∆FCLOSE FILE_DESCRIPTOR
+  ⊣ FD FIO∆WRITE_FD BYTE_VECTOR
+
+  ⊣ FIO∆CLOSE_FD FD
 ∇
 
 ⍝ Performs an individual recording of a file.
@@ -148,23 +152,23 @@ PREPROCESS_INPUT←{,/ ("\n" " ") FIO∆CVECTOR_REPLACE FIO∆BYTES_TO_UTF8 ⍵}
 ∇ARGUMENTS RUN_RECORD FILE_PATHS; SOURCE_FILE;RECORDING_FILE;SOURCE_FILE_CONTENTS
   SOURCE_FILE←↑FILE_PATHS[1]
   OUTPUT_FILE←↑FILE_PATHS[2]
-  ⍞←"Recording '",SOURCE_FILE,"' -> '",OUTPUT_FILE,"'...\n"
+  ⊣ FIO∆PRINTF "Recording '%s' -> '%s'...\n" SOURCE_FILE OUTPUT_FILE
 
   SOURCE_FILE_CONTENTS←FIO∆READ_ENTIRE_FILE SOURCE_FILE
-  →(¯2≢SOURCE_FILE_CONTENTS) ⍴ LREAD_SUCCESS
-    PANIC "unable to read file '",SOURCE_FILE,"'"
+  →(↑SOURCE_FILE_CONTENTS) ⍴ LREAD_SUCCESS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s': %s" SOURCE_FILE (↑1↓SOURCE_FILE_CONTENTS)
+    ⍎")OFF 1"
   LREAD_SUCCESS:
-  OUTPUT_FILE WRITE_FILE⍨ RUN_COWSAY ARGUMENTS , PREPROCESS_INPUT SOURCE_FILE_CONTENTS
+  OUTPUT_FILE WRITE_FILE⍨ RUN_COWSAY ARGUMENTS ,⊂ PREPROCESS_INPUT ↑1↓SOURCE_FILE_CONTENTS
 ∇
 
 ⍝ Performs the "record" action of this testing script, running cowsAyPL and
 ⍝ recording the results.
 ⍝ →FILENAME - the file in the sources directory to record.
 ∇RECORD FILENAME; SOURCE_FILE;OUTPUT_FILE_BASE
-  SOURCE_FILE←ARGS∆SOURCES_FOLDER FIO∆JOIN_PATHS FILENAME
-  OUTPUT_FILE_BASE←ARGS∆OUTPUTS_FOLDER FIO∆JOIN_PATHS FILENAME
+  SOURCE_FILE←ARGS∆SOURCES_FOLDER FIO∆JOIN_PATH FILENAME
+  OUTPUT_FILE_BASE←ARGS∆OUTPUTS_FOLDER FIO∆JOIN_PATH FILENAME
 
-  ⍬ RUN_RECORD SOURCE_FILE (OUTPUT_FILE_BASE,".expected")
   "+W" "10" RUN_RECORD SOURCE_FILE (OUTPUT_FILE_BASE,".expected_W_20")
   "+W" "30" RUN_RECORD SOURCE_FILE (OUTPUT_FILE_BASE,".expected_W_40")
   "+n" RUN_RECORD SOURCE_FILE (OUTPUT_FILE_BASE,".expected_n")
@@ -253,28 +257,30 @@ NEWLINE_BYTE←⎕UCS "\n"
 
   SOURCE_FILE←↑FILE_PATHS[1]
   OUTPUT_FILE←↑FILE_PATHS[2]
-  ⍞←"Testing '",SOURCE_FILE,"' -> '",OUTPUT_FILE,"'...\n"
+  ⊣ FIO∆PRINTF "Testing '%s' -> '%s'...\n" SOURCE_FILE OUTPUT_FILE
 
   ⍝ Reads in what we expect as nested lines.
   EXPECTED_RESULT_LINES←FIO∆READ_ENTIRE_FILE OUTPUT_FILE
-  →(¯2≢EXPECTED_RESULT_LINES) ⍴ LOUTPUT_READ_SUCCESS
-    PANIC "unable to read file '",OUTPUT_FILE,"'"
+  →(↑EXPECTED_RESULT_LINES) ⍴ LOUTPUT_READ_SUCCESS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s': %s\n" OUTPUT_FILE (↑1↓EXPECTED_RESULT_LINES)
+    ⍎")OFF 1"
   LOUTPUT_READ_SUCCESS:
-  EXPECTED_RESULT_LINES←NEWLINE_BYTE FIO∆SPLIT EXPECTED_RESULT_LINES
+  EXPECTED_RESULT_LINES←NEWLINE_BYTE FIO∆SPLIT ↑1↓EXPECTED_RESULT_LINES
 
   ⍝ Reads in what we got as nested lines.
   ACTUAL_RESULT_LINES←FIO∆READ_ENTIRE_FILE SOURCE_FILE
-  →(¯2≢ACTUAL_RESULT_LINES) ⍴ LSOURCE_READ_SUCCESS
-    PANIC "unable to read file '",SOURCE_FILE,"'"
+  →(↑ACTUAL_RESULT_LINES) ⍴ LSOURCE_READ_SUCCESS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s'\n" SOURCE_FILE
+    ⍎")OFF 1"
   LSOURCE_READ_SUCCESS:
-  ACTUAL_RESULT_LINES←NEWLINE_BYTE FIO∆SPLIT RUN_COWSAY ARGUMENTS , PREPROCESS_INPUT ACTUAL_RESULT_LINES
+  ACTUAL_RESULT_LINES←NEWLINE_BYTE FIO∆SPLIT RUN_COWSAY ARGUMENTS ,⊂ PREPROCESS_INPUT ↑1↓ACTUAL_RESULT_LINES
 
   ⍝ Check if line counts differ.
   →((≢EXPECTED_RESULT_LINES)≡≢ACTUAL_RESULT_LINES) ⍴ LSAME_LINE_COUNT
-    ERROR "line count of output from cowsAyPL differs in line count of expected results"
-    ERROR "Got:      ",(⍕≢ACTUAL_RESULT_LINES)," lines"
-    ERROR "Expected: ",(⍕≢EXPECTED_RESULT_LINES)," lines"
-    ERROR "Test failed"
+    ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: line count of output from cowsAyPL differs in line count of expected results\n"
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "Got:      %d lines\n" (≢ACTUAL_RESULT_LINES)
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "Expected: %d lines\n" (≢EXPECTED_RESULT_LINES)
+    ⊣ FIO∆STDERR FIO∆PRINT_FD "Test failed\n"
     →LFAILED
   LSAME_LINE_COUNT:
 
@@ -287,10 +293,10 @@ NEWLINE_BYTE←⎕UCS "\n"
     ACTUAL_RESULT_LINE←↑ACTUAL_RESULT_LINES[LINE_NUMBER]
 
     →(EXPECTED_RESULT_LINE≡ACTUAL_RESULT_LINE) ⍴ LEQUAL
-      ERROR "Contents of cowsAyPL output differs from expected results on line ",⍕LINE_NUMBER
-      ERROR "Got:      '",(FIO∆BYTES_TO_UTF8 ACTUAL_RESULT_LINE),"'"
-      ERROR "Expected: '",(FIO∆BYTES_TO_UTF8 EXPECTED_RESULT_LINE),"'"
-      ERROR "Test failed"
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "Contents of cowsAyPL output differs from expected results on line %d\n",⍕LINE_NUMBER
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "Got:      '%s'\n" (FIO∆BYTES_TO_UTF8 ACTUAL_RESULT_LINE)
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "Expected: '%s'\n" (FIO∆BYTES_TO_UTF8 EXPECTED_RESULT_LINE)
+      ⊣ FIO∆STDERR FIO∆PRINT_FD "Test failed\n"
       →LFAILED
     LEQUAL:
 
@@ -310,8 +316,8 @@ LFAILED:
 ⍝ comparing the results to what was previously recorded.
 ⍝ →FILENAME - the file in the sources directory to test.
 ∇TEST FILENAME; SOURCE_FILE;OUTPUT_FILE_BASE
-  SOURCE_FILE←ARGS∆SOURCES_FOLDER FIO∆JOIN_PATHS FILENAME
-  OUTPUT_FILE_BASE←ARGS∆OUTPUTS_FOLDER FIO∆JOIN_PATHS FILENAME
+  SOURCE_FILE←ARGS∆SOURCES_FOLDER FIO∆JOIN_PATH FILENAME
+  OUTPUT_FILE_BASE←ARGS∆OUTPUTS_FOLDER FIO∆JOIN_PATH FILENAME
 
   ⍬ RUN_TEST SOURCE_FILE (OUTPUT_FILE_BASE,".expected")
   "+W" "10" RUN_TEST SOURCE_FILE (OUTPUT_FILE_BASE,".expected_W_20")
@@ -389,17 +395,20 @@ LFAILED:
 ∇MAIN
   ARGS∆PARSE_ARGS ⎕ARG
 
-  →({ARGS∆ACTION≡⍵}¨"record" "test") / LRECORD LTEST
-    PANIC "MAIN: unreachable"
+  →((⊂ARGS∆ACTION)⍷"record" "test") / LRECORD LTEST
+    ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: MAIN: unreachable\n"
+    ⍎")OFF 1"
   LRECORD:
-    ⊣ FIO∆MKDIRS ARGS∆OUTPUTS_FOLDER
+    ⍝ TODO check status.
+    ⊣ 7 5 5 FIO∆MAKE_DIRECTORIES ARGS∆OUTPUTS_FOLDER
 
     RECORD¨ARGS∆SOURCES_FILENAMES
     ⍞←"Recording complete\n"
     →LSWITCH_END
   LTEST:
-    →(FIO∆IS_DIRECTORY ARGS∆OUTPUTS_FOLDER) ⍴ LOUTPUTS_DIRECTORY_EXISTS
-      PANIC "outputs folder '",ARGS∆OUTPUTS_FOLDER,"' does not exist"
+    →(↑FIO∆LIST_DIRECTORY ARGS∆OUTPUTS_FOLDER) ⍴ LOUTPUTS_DIRECTORY_EXISTS
+      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: outputs folder '%s' does not exist\n" ARGS∆OUTPUTS_FOLDER
+      ⍎")OFF 1"
     LOUTPUTS_DIRECTORY_EXISTS:
 
     TEST¨ARGS∆SOURCES_FILENAMES
@@ -412,7 +421,5 @@ LFAILED:
   LSWITCH_END:
 ∇
 MAIN
-
-
 
 )OFF

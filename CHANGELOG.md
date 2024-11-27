@@ -1,5 +1,13 @@
 # Changelog
 
+## Upcoming
+
+- Updated fio.apl library.
+- Relicensed as GPLv3+.
+- Removed buggy lambdas.
+
+## RELEASE-V1.2.2
+
 - Fixed bug with reading from stdin resuting in numbers being printed.
 - Updated fio.apl library.
 
