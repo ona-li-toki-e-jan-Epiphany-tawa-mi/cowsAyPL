@@ -28,7 +28,6 @@
 ⍝                         ||     ||
 
 ⊣ ⍎")COPY_ONCE fio.apl"
-⊣ ⍎")COPY_ONCE logging.apl"
 
 
 
