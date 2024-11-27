@@ -4,6 +4,7 @@
 
 - Updated fio.apl library.
 - Relicensed as GPLv3+.
+- Removed buggy lambdas.
 
 ## RELEASE-V1.2.2
 
