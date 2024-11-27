@@ -16,16 +16,16 @@
 ⍝ You should have received a copy of the GNU General Public License along with
 ⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
-⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-⍝ | Cowsay in GnuAPL |
-⍝ \__________________/
-⍝                 \
+⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
+⍝ | Cowsay in GNU APL |
+⍝ \___________________/
 ⍝                  \
-⍝                    ^__^
-⍝                    (oo)\_______
-⍝                    (__)\       )\/\
-⍝                        ||----w |
-⍝                        ||     ||
+⍝                   \
+⍝                     ^__^
+⍝                     (oo)\_______
+⍝                     (__)\       )\/\
+⍝                         ||----w |
+⍝                         ||     ||
 
 ⊣ ⍎")COPY_ONCE fio.apl"
 ⊣ ⍎")COPY_ONCE logging.apl"

@@ -1,14 +1,14 @@
 ```
-/¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-| Cowsay in GnuAPL |
-\__________________/
-                \
+/¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
+| Cowsay in GNU APL |
+\___________________/
                  \
-                   ^__^
-                   (oo)\_______
-                   (__)\       )\/\
-                       ||----w |
-                       ||     ||
+                  \
+                    ^__^
+                    (oo)\_______
+                    (__)\       )\/\
+                        ||----w |
+                        ||     ||
 ```
 
 # cowsAyPL
@@ -44,8 +44,8 @@
 
 ```
 /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-| You will need GnuAPL (https://www.gnu.org/software/apl) inst |
-| alled on your system.                                        |
+| You will need GNU APL (https://www.gnu.org/software/apl) ins |
+| talled on your system.                                       |
 |                                                              |
 | Execute either of the following command(s) in the project di |
 | rectory to get started:                                      |
