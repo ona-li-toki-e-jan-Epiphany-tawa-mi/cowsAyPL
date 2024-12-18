@@ -47,6 +47,11 @@
 | You will need GNU APL (https://www.gnu.org/software/apl) ins |
 | talled on your system.                                       |
 |                                                              |
+| There is a flake.nix you can use with the following command  |
+| to get it:                                                   |
+|                                                              |
+| nix develop                                                  |
+|                                                              |
 | Execute either of the following command(s) in the project di |
 | rectory to get started:                                      |
 |                                                              |

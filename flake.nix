@@ -28,7 +28,7 @@
     in {
       devShells = forAllSystems ({ pkgs }: {
         default = with pkgs; mkShell {
-          nativeBuildInputs = [
+          packages = [
             gnuapl
           ];
         };
