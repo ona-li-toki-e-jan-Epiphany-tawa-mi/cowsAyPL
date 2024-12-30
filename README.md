@@ -30,7 +30,6 @@
 |                                                              |
 | Note: the ability to list and use cowfiles is not implemente |
 | d.                                                           |
-|                                                              |
 \______________________________________________________________/
                                                             \
                                                              \
@@ -57,7 +56,6 @@
 |                                                              |
 | ./cowsay.apl -- +h                                           |
 | apl --script cowsay.apl -- +h                                |
-|                                                              |
 \______________________________________________________________/
                                                             \
                                                              \
@@ -99,11 +97,11 @@
 
 ```
 /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
-| You can install it with Nix from the NUR (https://github.com |
-| /nix-community/NUR) with the following attribute:            |
+| You can install it with Nix from my personal package reposit |
+| ory:                                                         |
 |                                                              |
-| nur.repos.ona-li-toki-e-jan-Epiphany-tawa-mi.cowsaypl        |
-|                                                              |
+| https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/epitap |
+| hpkgs                                                        |
 \______________________________________________________________/
                                                             \
                                                              \
