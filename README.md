@@ -100,8 +100,7 @@
 | You can install it with Nix from my personal package reposit |
 | ory:                                                         |
 |                                                              |
-| https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/epitap |
-| hpkgs                                                        |
+| https://paltepuk.xyz/cgit/epitaphpkgs.git/about              |
 \______________________________________________________________/
                                                             \
                                                              \
