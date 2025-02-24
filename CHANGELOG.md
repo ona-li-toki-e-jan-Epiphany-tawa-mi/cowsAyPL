@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming
+
+- Updated to fio.apl library.
+
 ## RELEASE-V1.2.3
 
 - Updated fio.apl library.
