@@ -16,6 +16,9 @@
 ⍝ You should have received a copy of the GNU General Public License along with
 ⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
+⍝ Data types:
+⍝  string - a character vector.
+
 ⍝ /¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯\
 ⍝ | Cowsay in GNU APL |
 ⍝ \___________________/
@@ -34,8 +37,10 @@
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝ The path to the apl interpreter used to call this program.
+⍝ Type: string.
 ARGS∆apl_path←⍬
 ⍝ The name of this file/program.
+⍝ Type: string.
 ARGS∆program_name←⍬
 ⍝ The maximum width of the text in the text bubble. Any text over the limit will be
 ⍝ word-wrapped. May be ≤ 0.
@@ -44,31 +49,35 @@ ARGS∆width←40
 ⍝ that of the longest line, and TEXT_WIDTH should be ignored.
 ARGS∆no_word_wrap←0
 ⍝ When the text to display is specified in the arguments of the command, it will
-⍝ be put into this variable. The non-empty value will be a vector of character
-⍝ vectors.
+⍝ be put into this variable.
+⍝ Type: vector<string>.
 ARGS∆text←⍬
 ⍝ The eyes to use for the cow. Must be a character vector of dimension 2.
+⍝ Type: string.
 ARGS∆eyes←"oo"
+⍝ Type: string.
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
 ARGS∆tounge←"  "
 
 ⍝ Whether "++" was encountered, meaning all following option-like arguments are
 ⍝ to be treated as files.
+⍝ Type: boolean.
 ARGS∆end_of_options←0
 ⍝ For options with arguments. When set to 1, the next argument is evaluated as
 ⍝ the repsective option's argument.
+⍝ Type: boolean.
 ARGS∆expect_width←0
+⍝ Type: boolean.
 ARGS∆expect_eyes←0
+⍝ Type: boolean.
 ARGS∆expect_tounge←0
 
-⍝ TODO make accept fd.
 ⍝ Displays a short help message.
 ∇ARGS∆DISPLAY_SHORT_HELP
   ⍞←"Try '",ARGS∆program_name," -- +h' for more information\n"
   ⍞←"Try '",ARGS∆apl_path," --script ",ARGS∆program_name," -- +h' for more information\n"
 ∇
 
-⍝ TODO make accept fd.
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
   ⍞←"Usages:\n"
@@ -115,14 +124,13 @@ ARGS∆expect_tounge←0
   ⍞←"    Young. Appearance preset. Incompatible with +e EYES and other presets.\n"
 ∇
 
-⍝ TODO make accept fd.
 ⍝ Displays the version.
 ∇ARGS∆DISPLAY_VERSION
   ⍞←"cowsaypl 1.2.3\n"
 ∇
 
-⍝ Parses an scalar character OPTION (anything after a "+") and updates ARGS∆*
-⍝ accordingly.
+⍝ Parses a single option and updates ARGS∆* accordingly.
+⍝ →option: character.
 ∇ARGS∆PARSE_OPTION option
   →(option≡¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / lhelp lversion lset_width lno_word_wrap lset_eyes lset_tounge lborg_mode ldead lgreedy lparanoid lstoned ltired lwired lyouthful
   LDEFAULT:
@@ -146,7 +154,8 @@ ARGS∆expect_tounge←0
   lswitch_end:
 ∇
 
-⍝ Parses a single character vector argument and updates ARGS∆* accordingly.
+⍝ Parses a single command line  argument and updates ARGS∆* accordingly.
+⍝ →argument: string.
 ∇ARGS∆PARSE_ARG argument
   ⍝ If "++" was encountered, everything is text.
   →ARGS∆end_of_options ⍴ ltext
@@ -186,7 +195,8 @@ ARGS∆expect_tounge←0
   lswitch_end:
 ∇
 
-⍝ Parses a vector of character vectors arguments and updates ARGS∆* accordingly.
+⍝ Parses command line arguments and updates ARGS∆* accordingly.
+⍝ →arguments: vector<string>
 ∇ARGS∆PARSE_ARGS arguments; invalid_option
   ⍝ ⎕ARG looks like "apl --script <script> -- [user arguments...]"
 
@@ -213,13 +223,18 @@ ARGS∆expect_tounge←0
 ⍝ Cowsay                                                                       ⍝
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
-⍝ Takes a block of text ⍵ and splits it into strings that are ⍺ characters
-⍝ long, and pads the final line with spaces to match the desired length.
-⍝ Returns a character matrix.
+⍝ Takes a block of text, splitting it into strings that of a desired length, and
+⍝ pads the final line with spaces to match the desired length, combining them
+⍝ into a matrix.
+⍝ →⍺: scalar whole number.
+⍝ →⍵: vector<string> - text block.
+⍝ ←: matrix<character>.
 SLICE_TEXT←{↑⍪/ ⍺{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-⍨⍺×1⌈⌈⍺÷⍨⍵}≢⍵}¨⍵}
 
-⍝ Takes a character matrix ⍵ and adds characters to make it look like the text
-⍝ is enveloped in a text bubble.
+⍝ Takes a character matrix and adds characters to make it look like the text is
+⍝ enveloped in a text bubble.
+⍝ →⍵: matrix<character>.
+⍝ ←: matrix<character>.
 BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}⍵}
 
 ∇MAIN; text;width

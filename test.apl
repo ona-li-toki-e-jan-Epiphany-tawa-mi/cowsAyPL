@@ -16,6 +16,10 @@
 ⍝ You should have received a copy of the GNU General Public License along with
 ⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
+⍝ Data types:
+⍝  string - a character vector.
+⍝  byte - a number, n, where 0≤n≤255.
+
 ⍝ cowsAyPL integration testing script.
 
 ⊣ ⍎")COPY_ONCE fio.apl"
@@ -230,9 +234,9 @@ ARGS∆action←"test"
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝ Counters to show how many tests passed.
-⍝ Type: scalar whole integer.
+⍝ Type: scalar whole number.
 test_count←0
-⍝ Type: scalar whole integer.
+⍝ Type: scalar whole number.
 passed_test_count←0
 
 ⍝ Tests a file against all configured test cases.
