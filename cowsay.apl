@@ -2,7 +2,7 @@
 
 ⍝ This file is part of cowsAyPL.
 ⍝
-⍝ Copyright (c) 2024 ona-li-toki-e-jan-Epiphany-tawa-mi
+⍝ Copyright (c) 2024-2025 ona-li-toki-e-jan-Epiphany-tawa-mi
 ⍝
 ⍝ cowsAyPL is free software: you can redistribute it and/or modify it under the
 ⍝ terms of the GNU General Public License as published by the Free Software
@@ -124,7 +124,7 @@ ARGS∆EXPECT_TOUNGE←0
 ∇ARGS∆PARSE_OPTION OPTION
   →(OPTION≡¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / LHELP LVERSION LSET_WIDTH LNO_WORD_WRAP LSET_EYES LSET_TOUNGE LBORG_MODE LDEAD LGREEDY LPARANOID LSTONED LTIRED LWIRED LYOUTHFUL
   LDEFAULT:
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" OPTION
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" OPTION
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
   LHELP:         ARGS∆DISPLAY_HELP    ◊ ⍎")OFF"    ◊ →LSWITCH_END
@@ -159,7 +159,7 @@ ARGS∆EXPECT_TOUNGE←0
   LDOUBLE_PLUS: ARGS∆END_OF_OPTIONS←1          ◊ →LSWITCH_END
   LSET_WIDTH:
     →(∨/ARGUMENT∊"0123456789") ⍴ LVALID_WIDTH
-      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+W': expected a whole number\n" ARGUMENT
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+W': expected a whole number\n" ARGUMENT
       ARGS∆DISPLAY_SHORT_HELP
       ⍎")OFF 1"
     LVALID_WIDTH:
@@ -167,7 +167,7 @@ ARGS∆EXPECT_TOUNGE←0
       ARGS∆EXPECT_WIDTH←0 ◊ →LSWITCH_END
   LSET_EYES:
     →(2≡≢ARGUMENT) ⍴ LVALID_EYES
-      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+e': expected a string of length 2\n" ARGUMENT
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+e': expected a string of length 2\n" ARGUMENT
       ARGS∆DISPLAY_SHORT_HELP
       ⍎")OFF 1"
     LVALID_EYES:
@@ -175,7 +175,7 @@ ARGS∆EXPECT_TOUNGE←0
       ARGS∆EXPECT_EYES←0 ◊ →LSWITCH_END
   LSET_TOUNGE:
     →(2≡≢ARGUMENT) ⍴ LVALID_TOUNGE
-      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+T': expected a string of length 2\n" ARGUMENT
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+T': expected a string of length 2\n" ARGUMENT
       ARGS∆DISPLAY_SHORT_HELP
       ⍎")OFF 1"
     LVALID_TOUNGE:
@@ -201,7 +201,7 @@ ARGS∆EXPECT_TOUNGE←0
   LSET_EYES:   INVALID_OPTION←"e" ◊ →LSWITCH_END
   LSET_TOUNGE: INVALID_OPTION←"T" ◊ →LSWITCH_END
   LSWITCH_END:
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: expected argument for option for option '+%s'\n" INVALID_OPTION
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: expected argument for option for option '+%s'\n" INVALID_OPTION
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
   LNO_INVALID_OPTIONS:
@@ -228,7 +228,7 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   LUSE_STDIN:
     TEXT←FIO∆READ_ENTIRE_FD FIO∆STDIN
     →(↑TEXT) ⍴ LREAD_SUCCESS
-      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read from stdin: %s" (↑1↓TEXT)
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unable to read from stdin: %s" (↑1↓TEXT)
     LREAD_SUCCESS:
     TEXT←"\n" FIO∆SPLIT FIO∆BYTES_TO_UTF8 ↑1↓TEXT
   LDONT_USE_STDIN:

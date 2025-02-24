@@ -124,7 +124,7 @@ ARGS∆action←"test"
 
   ⍝ 4 for APL and it's arguments.
   →(4≤≢arguments) ⍴ lsufficient_arguments
-    ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: insufficient arguments\n"
+    ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: insufficient arguments\n"
     ARGS∆DISPLAY_HELP
     ⍎")OFF 1"
   lsufficient_arguments:
@@ -160,7 +160,7 @@ ARGS∆action←"test"
 
   cowsay_fd←FIO∆POPEN_READ command
   →(↑cowsay_fd) ⍴ lsuccess
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: failed to launch cowsAyPL: %s\n" (↑1↓cowsay_fd)
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: failed to launch cowsAyPL: %s\n" (↑1↓cowsay_fd)
     ⍎")OFF 1"
   lsuccess:
   cowsay_fd←↑1↓cowsay_fd
@@ -201,7 +201,7 @@ ARGS∆action←"test"
 
   source_file_contents←FIO∆READ_ENTIRE_FILE source_file
   →(↑source_file_contents) ⍴ lread_success
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s': %s" source_file (↑1↓source_file_contents)
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unable to read file '%s': %s" source_file (↑1↓source_file_contents)
     ⍎")OFF 1"
   lread_success:
   output_file WRITE_FILE⍨ RUN_COWSAY test_case ,⊂ PREPROCESS_INPUT ↑1↓source_file_contents
@@ -215,7 +215,7 @@ ARGS∆action←"test"
 
   fd←"w" FIO∆OPEN_FILE path
   →(↑fd) ⍴ lsuccess
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: failed to open file '%s' for writing: %s" path (↑1↓fd)
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: failed to open file '%s' for writing: %s" path (↑1↓fd)
     ⍎")OFF 1"
   lsuccess:
   fd←↑1↓fd
@@ -257,7 +257,7 @@ passed_test_count←0
   ⍝ Reads in what we expect as output.
   expected_result←FIO∆READ_ENTIRE_FILE output_file
   →(↑expected_result) ⍴ loutput_read_success
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s': %s\n" output_file (↑1↓expected_result)
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unable to read file '%s': %s\n" output_file (↑1↓expected_result)
     ⍎")OFF 1"
   loutput_read_success:
   expected_result←↑1↓expected_result
@@ -265,19 +265,19 @@ passed_test_count←0
   ⍝ Reads in what we actually got.
   actual_result←FIO∆READ_ENTIRE_FILE source_file
   →(↑actual_result) ⍴ lsource_read_success
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s'\n" source_file
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unable to read file '%s'\n" source_file
     ⍎")OFF 1"
   lsource_read_success:
   actual_result←RUN_COWSAY test_case ,⊂ PREPROCESS_INPUT ↑1↓actual_result
 
   ⍝ Check if outputs differ.
   →(expected_result≡actual_result) ⍴ lsame
-    ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: output of cowsAyPL differs from expected output\n"
-    ⊣ FIO∆STDERR FIO∆PRINT_FD "Expected:\n"
-    ⊣ FIO∆STDERR FIO∆WRITE_FD expected_result
-    ⊣ FIO∆STDERR FIO∆PRINT_FD "Got:\n"
-    ⊣ FIO∆STDERR FIO∆WRITE_FD actual_result
-    ⊣ FIO∆STDERR FIO∆PRINT_FD "Test failed\n"
+    ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: output of cowsAyPL differs from expected output\n"
+    ⊣ FIO∆stderr FIO∆PRINT_FD "Expected:\n"
+    ⊣ FIO∆stderr FIO∆WRITE_FD expected_result
+    ⊣ FIO∆stderr FIO∆PRINT_FD "Got:\n"
+    ⊣ FIO∆stderr FIO∆WRITE_FD actual_result
+    ⊣ FIO∆stderr FIO∆PRINT_FD "Test failed\n"
     →lfailed
   lsame:
 
@@ -298,13 +298,13 @@ lfailed:
   ⍝ Reads list of source files.
   source_files←FIO∆LIST_DIRECTORY source_folder
   →(↑source_files) ⍴ lsources_folder_exists
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: sources folder '%s' does not exist\n" source_folder
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: sources folder '%s' does not exist\n" source_folder
     ⍎")OFF 1"
   lsources_folder_exists:
   source_files←↑1↓source_files
 
   →((⊂ARGS∆action)⍷"record" "test") / lrecord ltest
-    ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: MAIN: unreachable\n"
+    ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: MAIN: unreachable\n"
     ⍎")OFF 1"
   lrecord:
     RECORD_FILE¨source_files
