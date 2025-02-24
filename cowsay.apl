@@ -34,46 +34,46 @@
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝ The path to the apl interpreter used to call this program.
-ARGS∆APL_PATH←⍬
+ARGS∆apl_path←⍬
 ⍝ The name of this file/program.
-ARGS∆PROGRAM_NAME←⍬
+ARGS∆program_name←⍬
 ⍝ The maximum width of the text in the text bubble. Any text over the limit will be
 ⍝ word-wrapped. May be ≤ 0.
-ARGS∆WIDTH←40
+ARGS∆width←40
 ⍝ Whether to disable word wrapping. If set, the width of the bubble should be
 ⍝ that of the longest line, and TEXT_WIDTH should be ignored.
-ARGS∆NO_WORD_WRAP←0
+ARGS∆no_word_wrap←0
 ⍝ When the text to display is specified in the arguments of the command, it will
 ⍝ be put into this variable. The non-empty value will be a vector of character
 ⍝ vectors.
-ARGS∆TEXT←⍬
+ARGS∆text←⍬
 ⍝ The eyes to use for the cow. Must be a character vector of dimension 2.
-ARGS∆EYES←"oo"
+ARGS∆eyes←"oo"
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
-ARGS∆TOUNGE←"  "
+ARGS∆tounge←"  "
 
 ⍝ Whether "++" was encountered, meaning all following option-like arguments are
 ⍝ to be treated as files.
-ARGS∆END_OF_OPTIONS←0
+ARGS∆end_of_options←0
 ⍝ For options with arguments. When set to 1, the next argument is evaluated as
 ⍝ the repsective option's argument.
-ARGS∆EXPECT_WIDTH←0
-ARGS∆EXPECT_EYES←0
-ARGS∆EXPECT_TOUNGE←0
+ARGS∆expect_width←0
+ARGS∆expect_eyes←0
+ARGS∆expect_tounge←0
 
 ⍝ TODO make accept fd.
 ⍝ Displays a short help message.
 ∇ARGS∆DISPLAY_SHORT_HELP
-  ⍞←"Try '",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
-  ⍞←"Try '",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- +h' for more information\n"
+  ⍞←"Try '",ARGS∆program_name," -- +h' for more information\n"
+  ⍞←"Try '",ARGS∆apl_path," --script ",ARGS∆program_name," -- +h' for more information\n"
 ∇
 
 ⍝ TODO make accept fd.
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
   ⍞←"Usages:\n"
-  ⍞←"  ",ARGS∆PROGRAM_NAME," -- [options...] [TEXT...]\n"
-  ⍞←"  ",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- [options...] [TEXT...]\n"
+  ⍞←"  ",ARGS∆program_name," -- [options...] [TEXT...]\n"
+  ⍞←"  ",ARGS∆apl_path," --script ",ARGS∆program_name," -- [options...] [TEXT...]\n"
   ⍞←"\n"
   ⍞←"Prints out text art of a cow saying the supplied TEXT within a speech bubble. If\n"
   ⍞←"no TEXT is supplied as arguments to the function, it will instead be pulled from\n"
@@ -123,90 +123,90 @@ ARGS∆EXPECT_TOUNGE←0
 
 ⍝ Parses an scalar character OPTION (anything after a "+") and updates ARGS∆*
 ⍝ accordingly.
-∇ARGS∆PARSE_OPTION OPTION
-  →(OPTION≡¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / LHELP LVERSION LSET_WIDTH LNO_WORD_WRAP LSET_EYES LSET_TOUNGE LBORG_MODE LDEAD LGREEDY LPARANOID LSTONED LTIRED LWIRED LYOUTHFUL
+∇ARGS∆PARSE_OPTION option
+  →(option≡¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / lhelp lversion lset_width lno_word_wrap lset_eyes lset_tounge lborg_mode ldead lgreedy lparanoid lstoned ltired lwired lyouthful
   LDEFAULT:
-    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" OPTION
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" option
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
-  LHELP:         ARGS∆DISPLAY_HELP    ◊ ⍎")OFF"    ◊ →LSWITCH_END
-  LVERSION:      ARGS∆DISPLAY_VERSION ◊ ⍎")OFF"    ◊ →LSWITCH_END
-  LSET_WIDTH:    ARGS∆EXPECT_WIDTH←1               ◊ →LSWITCH_END
-  LNO_WORD_WRAP: ARGS∆NO_WORD_WRAP←1               ◊ →LSWITCH_END
-  LSET_EYES:     ARGS∆EXPECT_EYES←1                ◊ →LSWITCH_END
-  LSET_TOUNGE:   ARGS∆EXPECT_TOUNGE←1              ◊ →LSWITCH_END
-  LBORG_MODE:    ARGS∆EYES←"=="                    ◊ →LSWITCH_END
-  LDEAD:         ARGS∆EYES←"XX" ◊ ARGS∆TOUNGE←"U " ◊ →LSWITCH_END
-  LGREEDY:       ARGS∆EYES←"$$"                    ◊ →LSWITCH_END
-  LPARANOID:     ARGS∆EYES←"@@"                    ◊ →LSWITCH_END
-  LSTONED:       ARGS∆EYES←"**" ◊ ARGS∆TOUNGE←"U " ◊ →LSWITCH_END
-  LTIRED:        ARGS∆EYES←"--"                    ◊ →LSWITCH_END
-  LWIRED:        ARGS∆EYES←"OO"                    ◊ →LSWITCH_END
-  LYOUTHFUL:     ARGS∆EYES←".."                    ◊ →LSWITCH_END
-  LSWITCH_END:
+  lhelp:         ARGS∆DISPLAY_HELP    ◊ ⍎")OFF"    ◊ →lswitch_end
+  lversion:      ARGS∆DISPLAY_VERSION ◊ ⍎")OFF"    ◊ →lswitch_end
+  lset_width:    ARGS∆expect_width←1               ◊ →lswitch_end
+  lno_word_wrap: ARGS∆no_word_wrap←1               ◊ →lswitch_end
+  lset_eyes:     ARGS∆expect_eyes←1                ◊ →lswitch_end
+  lset_tounge:   ARGS∆expect_tounge←1              ◊ →lswitch_end
+  lborg_mode:    ARGS∆eyes←"=="                    ◊ →lswitch_end
+  ldead:         ARGS∆eyes←"XX" ◊ ARGS∆tounge←"U " ◊ →lswitch_end
+  lgreedy:       ARGS∆eyes←"$$"                    ◊ →lswitch_end
+  lparanoid:     ARGS∆eyes←"@@"                    ◊ →lswitch_end
+  lstoned:       ARGS∆eyes←"**" ◊ ARGS∆tounge←"U " ◊ →lswitch_end
+  ltired:        ARGS∆eyes←"--"                    ◊ →lswitch_end
+  lwired:        ARGS∆eyes←"OO"                    ◊ →lswitch_end
+  lyouthful:     ARGS∆eyes←".."                    ◊ →lswitch_end
+  lswitch_end:
 ∇
 
-⍝ Parses a single character vector ARGUMENT and updates ARGS∆* accordingly.
-∇ARGS∆PARSE_ARG ARGUMENT
+⍝ Parses a single character vector argument and updates ARGS∆* accordingly.
+∇ARGS∆PARSE_ARG argument
   ⍝ If "++" was encountered, everything is text.
-  →ARGS∆END_OF_OPTIONS ⍴ LTEXT
+  →ARGS∆end_of_options ⍴ ltext
   ⍝ Handles arguments to options with arguments.
-  →ARGS∆EXPECT_WIDTH ARGS∆EXPECT_EYES ARGS∆EXPECT_TOUNGE / LSET_WIDTH LSET_EYES LSET_TOUNGE
+  →ARGS∆expect_width ARGS∆expect_eyes ARGS∆expect_tounge / lset_width lset_eyes lset_tounge
   ⍝ Handles "++".
-  →("++"≡ARGUMENT) ⍴ LDOUBLE_PLUS
+  →("++"≡argument) ⍴ ldouble_plus
   ⍝ Handles options.
-  →((1<≢ARGUMENT)∧'+'≡↑ARGUMENT) ⍴ LOPTION
-  LTEXT:        ARGS∆TEXT←ARGS∆TEXT,⊂ARGUMENT  ◊ →LSWITCH_END
-  LOPTION:      ARGS∆PARSE_OPTION¨ 1↓ARGUMENT  ◊ →LSWITCH_END
-  LDOUBLE_PLUS: ARGS∆END_OF_OPTIONS←1          ◊ →LSWITCH_END
-  LSET_WIDTH:
-    →(∨/ARGUMENT∊"0123456789") ⍴ LVALID_WIDTH
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+W': expected a whole number\n" ARGUMENT
+  →((1<≢argument)∧'+'≡↑argument) ⍴ loption
+  ltext:        ARGS∆text←ARGS∆text,⊂argument  ◊ →lswitch_end
+  loption:      ARGS∆PARSE_OPTION¨ 1↓argument  ◊ →lswitch_end
+  ldouble_plus: ARGS∆end_of_options←1          ◊ →lswitch_end
+  lset_width:
+    →(∨/argument∊"0123456789") ⍴ lvalid_width
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+W': expected a whole number\n" argument
       ARGS∆DISPLAY_SHORT_HELP
       ⍎")OFF 1"
-    LVALID_WIDTH:
-      ARGS∆WIDTH←⍎ARGUMENT
-      ARGS∆EXPECT_WIDTH←0 ◊ →LSWITCH_END
-  LSET_EYES:
-    →(2≡≢ARGUMENT) ⍴ LVALID_EYES
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+e': expected a string of length 2\n" ARGUMENT
+    lvalid_width:
+      ARGS∆width←⍎argument
+      ARGS∆expect_width←0 ◊ →lswitch_end
+  lset_eyes:
+    →(2≡≢argument) ⍴ lvalid_eyes
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+e': expected a string of length 2\n" argument
       ARGS∆DISPLAY_SHORT_HELP
       ⍎")OFF 1"
-    LVALID_EYES:
-      ARGS∆EYES←ARGUMENT
-      ARGS∆EXPECT_EYES←0 ◊ →LSWITCH_END
-  LSET_TOUNGE:
-    →(2≡≢ARGUMENT) ⍴ LVALID_TOUNGE
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+T': expected a string of length 2\n" ARGUMENT
+    lvalid_eyes:
+      ARGS∆eyes←argument
+      ARGS∆expect_eyes←0 ◊ →lswitch_end
+  lset_tounge:
+    →(2≡≢argument) ⍴ lvalid_tounge
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+T': expected a string of length 2\n" argument
       ARGS∆DISPLAY_SHORT_HELP
       ⍎")OFF 1"
-    LVALID_TOUNGE:
-      ARGS∆TOUNGE←ARGUMENT
-      ARGS∆EXPECT_TOUNGE←0 ◊ →LSWITCH_END
-  LSWITCH_END:
+    lvalid_tounge:
+      ARGS∆tounge←argument
+      ARGS∆expect_tounge←0 ◊ →lswitch_end
+  lswitch_end:
 ∇
 
-⍝ Parses a vector of character vectors ARGUMENTS and updates ARGS∆* accordingly.
-∇ARGS∆PARSE_ARGS ARGUMENTS; INVALID_OPTION
+⍝ Parses a vector of character vectors arguments and updates ARGS∆* accordingly.
+∇ARGS∆PARSE_ARGS arguments; invalid_option
   ⍝ ⎕ARG looks like "apl --script <script> -- [user arguments...]"
 
-  ARGS∆APL_PATH←↑ARGUMENTS[1]
-  ARGS∆PROGRAM_NAME←↑ARGUMENTS[3]
-  →(4≥≢ARGUMENTS) ⍴ LNO_ARGUMENTS
-    ARGS∆PARSE_ARG¨ 4↓ARGUMENTS
-  LNO_ARGUMENTS:
+  ARGS∆apl_path←↑arguments[1]
+  ARGS∆program_name←↑arguments[3]
+  →(4≥≢arguments) ⍴ lno_arguments
+    ARGS∆PARSE_ARG¨ 4↓arguments
+  lno_arguments:
 
   ⍝ Tests for any options with arguments that were not supplied an argument.
-  →(~∨/ARGS∆EXPECT_WIDTH ARGS∆EXPECT_EYES ARGS∆EXPECT_TOUNGE) ⍴ LNO_INVALID_OPTIONS
-  →ARGS∆EXPECT_WIDTH ARGS∆EXPECT_EYES ARGS∆EXPECT_TOUNGE / LSET_WIDTH LSET_EYES LSET_TOUNGE
-  LSET_WIDTH:  INVALID_OPTION←"W" ◊ →LSWITCH_END
-  LSET_EYES:   INVALID_OPTION←"e" ◊ →LSWITCH_END
-  LSET_TOUNGE: INVALID_OPTION←"T" ◊ →LSWITCH_END
-  LSWITCH_END:
-    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: expected argument for option for option '+%s'\n" INVALID_OPTION
+  →(~∨/ARGS∆expect_width ARGS∆expect_eyes ARGS∆expect_tounge) ⍴ lno_invalid_options
+  →ARGS∆expect_width ARGS∆expect_eyes ARGS∆expect_tounge / lset_width lset_eyes lset_tounge
+  lset_width:  invalid_option←"W" ◊ →lswitch_end
+  lset_eyes:   invalid_option←"e" ◊ →lswitch_end
+  lset_tounge: invalid_option←"T" ◊ →lswitch_end
+  lswitch_end:
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: expected argument for option for option '+%s'\n" invalid_option
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
-  LNO_INVALID_OPTIONS:
+  lno_invalid_options:
 ∇
 
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
@@ -222,28 +222,28 @@ SLICE_TEXT←{↑⍪/ ⍺{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-
 ⍝ is enveloped in a text bubble.
 BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}⍵}
 
-∇MAIN; TEXT;WIDTH
+∇MAIN; text;width
   ARGS∆PARSE_ARGS ⎕ARG
 
-  ⍝ Gets the TEXT to go in text bubble, resulting in a vector of character
+  ⍝ Gets the text to go in text bubble, resulting in a vector of character
   ⍝ vectors, with each subvector being a line of text.
-  →(0≡≢ARGS∆TEXT) ⍴ LUSE_STDIN
-    TEXT←{⍺,' ',⍵}/ARGS∆TEXT ◊ →LDONT_USE_STDIN
-  LUSE_STDIN:
-    TEXT←FIO∆READ_ENTIRE_FD FIO∆STDIN
-    →(↑TEXT) ⍴ LREAD_SUCCESS
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unable to read from stdin: %s" (↑1↓TEXT)
-    LREAD_SUCCESS:
-    TEXT←"\n" FIO∆SPLIT FIO∆BYTES_TO_UTF8 ↑1↓TEXT
-  LDONT_USE_STDIN:
+  →(0≡≢ARGS∆text) ⍴ luse_stdin
+    text←{⍺,' ',⍵}/ARGS∆text ◊ →ldont_use_stdin
+  luse_stdin:
+    text←FIO∆READ_ENTIRE_FD FIO∆stdin
+    →(↑text) ⍴ lread_success
+      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unable to read from stdin: %s" (↑1↓text)
+    lread_success:
+    text←"\n" FIO∆SPLIT FIO∆BYTES_TO_UTF8 ↑1↓text
+  ldont_use_stdin:
 
-  ⍝ If ARGS∆NO_WORD_WRAP≡1, the maximum width will be the width of the longest
-  ⍝ line, else the width will be a maximum of ARGS∆WIDTH.
-  WIDTH←↑(ARGS∆NO_WORD_WRAP+1)⌷{(⍵⌊1⌈ARGS∆WIDTH),⍵}⌈/≢¨TEXT
+  ⍝ If ARGS∆no_word_wrap≡1, the maximum width will be the width of the longest
+  ⍝ line, else the width will be a maximum of ARGS∆width.
+  width←↑(ARGS∆no_word_wrap+1)⌷{(⍵⌊1⌈ARGS∆width),⍵}⌈/≢¨text
   ⍝ say.
-  ⍞←BUBBLIFY WIDTH SLICE_TEXT TEXT
+  ⍞←BUBBLIFY width SLICE_TEXT text
   ⍝ cow. TODO make cow not move to the right.
-  ⍞←{⍵,⍨' '⍴⍨WIDTH,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',ARGS∆EYES,')\_______') ('   (__)\       )\/\') ('    ',ARGS∆TOUNGE,' ||----w |') ('       ||     ||')
+  ⍞←{⍵,⍨' '⍴⍨width,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',ARGS∆eyes,')\_______') ('   (__)\       )\/\') ('    ',ARGS∆tounge,' ||----w |') ('       ||     ||')
 ∇
 MAIN
 
