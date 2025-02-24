@@ -129,6 +129,11 @@ ARGS∆action←"test"
     ARGS∆DISPLAY_HELP
     ⍎")OFF 1"
   lsufficient_arguments:
+  →("--"≡↑arguments[4]) ⍴ lfound_dash_dash
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: expected '--', but got '%s'\n" ↑arguments[4]
+    ARGS∆DISPLAY_SHORT_HELP
+    ⍎")OFF 1"
+  lfound_dash_dash:
 
   →(~arguments∊⍨⊂"record") ⍴ ltest
     ARGS∆action←"record"
