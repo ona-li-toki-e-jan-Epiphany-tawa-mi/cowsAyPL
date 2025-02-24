@@ -108,7 +108,7 @@ ARGS∆tounge←"  "
 
 ⍝ Displays the version.
 ∇ARGS∆DISPLAY_VERSION
-  ⍞←"cowsaypl 1.2.3\n"
+  ⍞←"cowsaypl 2.0.0\n"
 ∇
 
 ⍝ Displays the license and sources.

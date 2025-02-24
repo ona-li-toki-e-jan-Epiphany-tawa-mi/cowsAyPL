@@ -1,6 +1,6 @@
 # Changelog
 
-## Upcoming
+## 2.0.0
 
 - Updated to fio.apl library.
 - Vastly improved and simplified argument parsing. Arguments to options can now be specified without spaces, i.e.: '+W25'.
