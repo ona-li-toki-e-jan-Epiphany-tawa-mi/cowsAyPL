@@ -364,8 +364,15 @@ BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/
   width←↑(ARGS∆no_word_wrap+1)⌷{(⍵⌊1⌈ARGS∆width),⍵}⌈/≢¨text
   ⍝ say.
   ⍞←BUBBLIFY width SLICE_TEXT text
-  ⍝ cow. TODO make cow not move to the right.
-  ⍞←{⍵,⍨' '⍴⍨width,⍨↑⍴⍵}⊃('\') (' \') ('   ^__^') ('   (',ARGS∆eyes,')\_______') ('   (__)\       )\/\') ('    ',ARGS∆tounge,' ||----w |') ('       ||     ||')
+  ⍞←"\n"
+  ⍝ cow.
+  ⍞←"        \\\n"
+  ⍞←"         \\\n"
+  ⍞←"           ^__^\n"
+  ⍞←"           (",ARGS∆eyes,")\\_______\n"
+  ⍞←"           (__)\\       )\\/\\\n"
+  ⍞←"            ",ARGS∆tounge," ||----w |\n"
+  ⍞←"               ||     ||\n"
 ∇
 MAIN
 
