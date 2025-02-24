@@ -72,6 +72,7 @@ ARGS∆tounge←"  "
   ⍞←"Options:\n"
   ⍞←"  +h    Displays help and exits.\n"
   ⍞←"  +v    Displays version and exits.\n"
+  ⍞←"  +l    Displays license and exits.\n"
   ⍞←"  +W WIDTH\n"
   ⍞←"    Unsinged integer. Sets the maximum WIDTH of lines within the generated text\n"
   ⍞←"    bubbles. Defaults to 40 Incompatible with +n.\n"
@@ -108,6 +109,31 @@ ARGS∆tounge←"  "
 ⍝ Displays the version.
 ∇ARGS∆DISPLAY_VERSION
   ⍞←"cowsaypl 1.2.3\n"
+∇
+
+⍝ Displays the license and sources.
+∇ARGS∆DISPLAY_LICENSE
+  ⍞←"Copyright (c) 2024-2025 ona-li-toki-e-jan-Epiphany-tawa-mi\n"
+  ⍞←"\n"
+  ⍞←"cowsAyPL is free software: you can redistribute it and/or modify it under the\n"
+  ⍞←"terms of the GNU General Public License as published by the Free Software\n"
+  ⍞←"Foundation, either version 3 of the License, or (at your option) any later\n"
+  ⍞←"version.\n"
+  ⍞←"\n"
+  ⍞←"cowsAyPL is distributed in the hope that it will be useful, but WITHOUT ANY\n"
+  ⍞←"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n"
+  ⍞←"A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n"
+  ⍞←"\n"
+  ⍞←"You should have received a copy of the GNU General Public License along with\n"
+  ⍞←"cowsAyPL. If not, see <https://www.gnu.org/licenses/>.\n"
+  ⍞←"\n"
+  ⍞←"Source (paltepuk):\n"
+  ⍞←"  https://paltepuk.xyz/cgit/cowsAyPL.git/about/\n"
+  ⍞←"  (I2P) http://oytjumugnwsf4g72vemtamo72vfvgmp4lfsf6wmggcvba3qmcsta.b32.i2p/cgit/cowsAyPL.git/about/\n"
+  ⍞←"  (Tor) http://4blcq4arxhbkc77tfrtmy4pptf55gjbhlj32rbfyskl672v2plsmjcyd.onion/cgit/cowsAyPL.git/about/\n"
+  ⍞←"\n"
+  ⍞←"Source (GitHub):\n"
+  ⍞←"  https://github.com/ona-li-toki-e-jan-Epiphany-tawa-mi/cowsAyPL\n"
 ∇
 
 ⍝ Displays a short help message.
@@ -189,12 +215,13 @@ ARGS∆tounge←"  "
   option←↑options
   options←1↓options
 
-  →(option="hvWneTbdgpstwy") / lhelp lversion lset_width lno_word_wrap lset_eyes lset_tounge lborg_mode ldead lgreedy lparanoid lstoned ltired lwired lyouthful
+  →(option="hvlWneTbdgpstwy") / lhelp lversion llicense lset_width lno_word_wrap lset_eyes lset_tounge lborg_mode ldead lgreedy lparanoid lstoned ltired lwired lyouthful
     ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" option
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
   lhelp:    ARGS∆DISPLAY_HELP    ◊ ⍎")OFF" ◊ →lswitch_end
   lversion: ARGS∆DISPLAY_VERSION ◊ ⍎")OFF" ◊ →lswitch_end
+  llicense: ARGS∆DISPLAY_LICENSE ◊ ⍎")OFF" ◊ →lswitch_end
   lset_width:
     →(0≡≢options) ⍴ lwidth_is_next_argument
       ARGS∆PARSE_WIDTH arguments,⍨⊂options ◊ →lwidth_is_remaining_options
