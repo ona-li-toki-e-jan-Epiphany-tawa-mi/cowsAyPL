@@ -16,6 +16,10 @@
 ⍝ You should have received a copy of the GNU General Public License along with
 ⍝ cowsAyPL. If not, see <https://www.gnu.org/licenses/>.
 
+⍝ Data types:
+⍝  string - a character vector.
+⍝  byte - a number, n, where 0≤n≤255.
+
 ⍝ cowsAyPL integration testing script.
 
 ⊣ ⍎")COPY_ONCE fio.apl"
@@ -115,19 +119,21 @@ ARGS∆action←"test"
 ∇
 
 ⍝ Parses command line arguments and updates ARGS∆* accordingly.
-⍝ →ARGUMENTS: vector<string>
+⍝ →arguments: vector<string>
 ∇ARGS∆PARSE_ARGS arguments
-  ⍝ ARGUMENTS looks like "<apl path> --script <script> -- [user arguments...]"
-
+  ⍝ arguments looks like "<apl path> --script <script> -- [user arguments...]"
   ARGS∆apl_path←↑arguments
   ARGS∆program_name←↑arguments[3]
-
-  ⍝ 4 for APL and it's arguments.
   →(4≤≢arguments) ⍴ lsufficient_arguments
     ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: insufficient arguments\n"
     ARGS∆DISPLAY_HELP
     ⍎")OFF 1"
   lsufficient_arguments:
+  →("--"≡↑arguments[4]) ⍴ lfound_dash_dash
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: expected '--', but got '%s'\n" ↑arguments[4]
+    ARGS∆DISPLAY_SHORT_HELP
+    ⍎")OFF 1"
+  lfound_dash_dash:
 
   →(~arguments∊⍨⊂"record") ⍴ ltest
     ARGS∆action←"record"
@@ -230,9 +236,9 @@ ARGS∆action←"test"
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝ Counters to show how many tests passed.
-⍝ Type: scalar whole integer.
+⍝ Type: scalar whole number.
 test_count←0
-⍝ Type: scalar whole integer.
+⍝ Type: scalar whole number.
 passed_test_count←0
 
 ⍝ Tests a file against all configured test cases.
@@ -314,9 +320,9 @@ lfailed:
     TEST_FILE¨source_files
     ⍞←passed_test_count ◊ ⍞←"/" ◊ ⍞←test_count ◊ ⍞←" tests passed - "
     →(passed_test_count≡test_count) ⍴ lall_tests_passed
-      ⍞←"FAIL\n" ◊ →ltests_failed
-    lall_tests_passed: ⍞←"OK\n"
-    ltests_failed:
+      ⍞←"FAIL\n" ◊ ⍎")OFF 1"
+    lall_tests_passed:
+    ⍞←"OK\n" ◊ ⍎")OFF"
     →lswitch_end
   lswitch_end:
 ∇

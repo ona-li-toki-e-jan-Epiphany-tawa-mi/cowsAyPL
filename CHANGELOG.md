@@ -3,6 +3,9 @@
 ## Upcoming
 
 - Updated to fio.apl library.
+- Vastly improved and simplified argument parsing. Arguments to options can now be specified without spaces, i.e.: '+W25'.
+- Added '+l' option.
+- Made cow stay in place.
 
 ## RELEASE-V1.2.3
 
