@@ -268,6 +268,7 @@ passed_test_count←0
     ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: unable to read file '%s'\n" source_file
     ⍎")OFF 1"
   lsource_read_success:
+  actual_result←RUN_COWSAY test_case ,⊂ PREPROCESS_INPUT ↑1↓actual_result
 
   ⍝ Check if outputs differ.
   →(expected_result≡actual_result) ⍴ lsame
