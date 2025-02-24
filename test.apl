@@ -119,14 +119,11 @@ ARGS∆action←"test"
 ∇
 
 ⍝ Parses command line arguments and updates ARGS∆* accordingly.
-⍝ →ARGUMENTS: vector<string>
+⍝ →arguments: vector<string>
 ∇ARGS∆PARSE_ARGS arguments
-  ⍝ ARGUMENTS looks like "<apl path> --script <script> -- [user arguments...]"
-
+  ⍝ arguments looks like "<apl path> --script <script> -- [user arguments...]"
   ARGS∆apl_path←↑arguments
   ARGS∆program_name←↑arguments[3]
-
-  ⍝ 4 for APL and it's arguments.
   →(4≤≢arguments) ⍴ lsufficient_arguments
     ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: insufficient arguments\n"
     ARGS∆DISPLAY_HELP

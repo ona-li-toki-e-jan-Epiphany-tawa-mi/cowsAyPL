@@ -3,6 +3,7 @@
 ## Upcoming
 
 - Updated to fio.apl library.
+- Vastly improved and simplified argument parsing.
 
 ## RELEASE-V1.2.3
 

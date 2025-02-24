@@ -59,25 +59,6 @@ ARGS∆eyes←"oo"
 ⍝ The tounge to use for the cow. Must be a character vector of dimension 2.
 ARGS∆tounge←"  "
 
-⍝ Whether "++" was encountered, meaning all following option-like arguments are
-⍝ to be treated as files.
-⍝ Type: boolean.
-ARGS∆end_of_options←0
-⍝ For options with arguments. When set to 1, the next argument is evaluated as
-⍝ the repsective option's argument.
-⍝ Type: boolean.
-ARGS∆expect_width←0
-⍝ Type: boolean.
-ARGS∆expect_eyes←0
-⍝ Type: boolean.
-ARGS∆expect_tounge←0
-
-⍝ Displays a short help message.
-∇ARGS∆DISPLAY_SHORT_HELP
-  ⍞←"Try '",ARGS∆program_name," -- +h' for more information\n"
-  ⍞←"Try '",ARGS∆apl_path," --script ",ARGS∆program_name," -- +h' for more information\n"
-∇
-
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
   ⍞←"Usages:\n"
@@ -129,94 +110,188 @@ ARGS∆expect_tounge←0
   ⍞←"cowsaypl 1.2.3\n"
 ∇
 
-⍝ Parses a single option and updates ARGS∆* accordingly.
-⍝ →option: character.
-∇ARGS∆PARSE_OPTION option
-  →(option≡¨'h' 'v' 'W' 'n' 'e' 'T' 'b' 'd' 'g' 'p' 's' 't' 'w' 'y') / lhelp lversion lset_width lno_word_wrap lset_eyes lset_tounge lborg_mode ldead lgreedy lparanoid lstoned ltired lwired lyouthful
-  LDEFAULT:
+⍝ Displays a short help message.
+∇ARGS∆DISPLAY_SHORT_HELP
+  ⍞←"Try '",ARGS∆program_name," -- +h' for more information\n"
+  ⍞←"Try '",ARGS∆apl_path," --script ",ARGS∆program_name," -- +h' for more information\n"
+∇
+
+⍝ Argument parser width state.
+⍝ →arguments: vector<string> - remaining command line arguments.
+∇ARGS∆PARSE_WIDTH arguments; argument
+  →(0≢≢arguments) ⍴ lhas_arguments
+     ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: +W specified without argument\n"
+     ARGS∆DISPLAY_SHORT_HELP
+     ⍎")OFF 1"
+  lhas_arguments:
+  argument←↑arguments
+  arguments←1↓arguments
+
+  →(∨/argument∊"0123456789") ⍴ lvalid_width
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option +W: expected a whole number\n" argument
+    ARGS∆DISPLAY_SHORT_HELP
+    ⍎")OFF 1"
+  lvalid_width:
+
+  ARGS∆width←⍎argument
+  ARGS∆PARSE_ARGUMENT arguments
+∇
+
+⍝ Argument parser eyes state.
+⍝ →arguments: vector<string> - remaining command line arguments.
+∇ARGS∆PARSE_EYES arguments; argument
+  →(0≢≢arguments) ⍴ lhas_arguments
+     ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: +e specified without argument\n"
+     ARGS∆DISPLAY_SHORT_HELP
+     ⍎")OFF 1"
+  lhas_arguments:
+  argument←↑arguments
+  arguments←1↓arguments
+
+  →(2≡≢argument) ⍴ lvalid_eyes
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option +e: expected a string of length 2\n" argument
+    ARGS∆DISPLAY_SHORT_HELP
+    ⍎")OFF 1"
+  lvalid_eyes:
+
+  ARGS∆eyes←argument
+  ARGS∆PARSE_ARGUMENT arguments
+∇
+
+⍝ Argument parser tounge state.
+⍝ →arguments: vector<string> - remaining command line arguments.
+∇ARGS∆PARSE_TOUNGE arguments; argument
+  →(0≢≢arguments) ⍴ lhas_arguments
+     ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: +T specified without argument\n"
+     ARGS∆DISPLAY_SHORT_HELP
+     ⍎")OFF 1"
+  lhas_arguments:
+  argument←↑arguments
+  arguments←1↓arguments
+
+  →(2≡≢argument) ⍴ lvalid_tounge
+    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option +T: expected a string of length 2\n" argument
+    ARGS∆DISPLAY_SHORT_HELP
+    ⍎")OFF 1"
+  lvalid_tounge:
+
+  ARGS∆tounge←argument
+  ARGS∆PARSE_ARGUMENT arguments
+∇
+
+⍝ Argument parser options state.
+⍝ →arguments: vector<string> - remaining command line arguments.
+⍝ →options: string - options without leading '+'.
+∇arguments ARGS∆PARSE_OPTIONS options; option
+  →(0≢≢options) ⍴ lhas_options
+    ARGS∆PARSE_ARGUMENT arguments ◊ →lend
+  lhas_options:
+  option←↑options
+  options←1↓options
+
+  →(option="hvWneTbdgpstwy") / lhelp lversion lset_width lno_word_wrap lset_eyes lset_tounge lborg_mode ldead lgreedy lparanoid lstoned ltired lwired lyouthful
     ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: unknown option '+%s'\n" option
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
-  lhelp:         ARGS∆DISPLAY_HELP    ◊ ⍎")OFF"    ◊ →lswitch_end
-  lversion:      ARGS∆DISPLAY_VERSION ◊ ⍎")OFF"    ◊ →lswitch_end
-  lset_width:    ARGS∆expect_width←1               ◊ →lswitch_end
-  lno_word_wrap: ARGS∆no_word_wrap←1               ◊ →lswitch_end
-  lset_eyes:     ARGS∆expect_eyes←1                ◊ →lswitch_end
-  lset_tounge:   ARGS∆expect_tounge←1              ◊ →lswitch_end
-  lborg_mode:    ARGS∆eyes←"=="                    ◊ →lswitch_end
-  ldead:         ARGS∆eyes←"XX" ◊ ARGS∆tounge←"U " ◊ →lswitch_end
-  lgreedy:       ARGS∆eyes←"$$"                    ◊ →lswitch_end
-  lparanoid:     ARGS∆eyes←"@@"                    ◊ →lswitch_end
-  lstoned:       ARGS∆eyes←"**" ◊ ARGS∆tounge←"U " ◊ →lswitch_end
-  ltired:        ARGS∆eyes←"--"                    ◊ →lswitch_end
-  lwired:        ARGS∆eyes←"OO"                    ◊ →lswitch_end
-  lyouthful:     ARGS∆eyes←".."                    ◊ →lswitch_end
-  lswitch_end:
-∇
-
-⍝ Parses a single command line  argument and updates ARGS∆* accordingly.
-⍝ →argument: string.
-∇ARGS∆PARSE_ARG argument
-  ⍝ If "++" was encountered, everything is text.
-  →ARGS∆end_of_options ⍴ ltext
-  ⍝ Handles arguments to options with arguments.
-  →ARGS∆expect_width ARGS∆expect_eyes ARGS∆expect_tounge / lset_width lset_eyes lset_tounge
-  ⍝ Handles "++".
-  →("++"≡argument) ⍴ ldouble_plus
-  ⍝ Handles options.
-  →((1<≢argument)∧'+'≡↑argument) ⍴ loption
-  ltext:        ARGS∆text←ARGS∆text,⊂argument  ◊ →lswitch_end
-  loption:      ARGS∆PARSE_OPTION¨ 1↓argument  ◊ →lswitch_end
-  ldouble_plus: ARGS∆end_of_options←1          ◊ →lswitch_end
+  lhelp:    ARGS∆DISPLAY_HELP    ◊ ⍎")OFF" ◊ →lswitch_end
+  lversion: ARGS∆DISPLAY_VERSION ◊ ⍎")OFF" ◊ →lswitch_end
   lset_width:
-    →(∨/argument∊"0123456789") ⍴ lvalid_width
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+W': expected a whole number\n" argument
-      ARGS∆DISPLAY_SHORT_HELP
-      ⍎")OFF 1"
-    lvalid_width:
-      ARGS∆width←⍎argument
-      ARGS∆expect_width←0 ◊ →lswitch_end
+    →(0≡≢options) ⍴ lwidth_is_next_argument
+      ARGS∆PARSE_WIDTH arguments,⍨⊂options ◊ →lwidth_is_remaining_options
+    lwidth_is_next_argument:
+      ARGS∆PARSE_WIDTH arguments
+    lwidth_is_remaining_options:
+    →lswitch_end
+  lno_word_wrap:
+    ARGS∆no_word_wrap←1
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
   lset_eyes:
-    →(2≡≢argument) ⍴ lvalid_eyes
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+e': expected a string of length 2\n" argument
-      ARGS∆DISPLAY_SHORT_HELP
-      ⍎")OFF 1"
-    lvalid_eyes:
-      ARGS∆eyes←argument
-      ARGS∆expect_eyes←0 ◊ →lswitch_end
+    →(0≡≢options) ⍴ leyes_is_next_argument
+      ARGS∆PARSE_EYES arguments,⍨⊂options ◊ →leyes_is_remaining_options
+    leyes_is_next_argument:
+      ARGS∆PARSE_EYES arguments
+    leyes_is_remaining_options:
+    →lswitch_end
   lset_tounge:
-    →(2≡≢argument) ⍴ lvalid_tounge
-      ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option '+T': expected a string of length 2\n" argument
-      ARGS∆DISPLAY_SHORT_HELP
-      ⍎")OFF 1"
-    lvalid_tounge:
-      ARGS∆tounge←argument
-      ARGS∆expect_tounge←0 ◊ →lswitch_end
+    →(0≡≢options) ⍴ ltounge_is_next_argument
+      ARGS∆PARSE_TOUNGE arguments,⍨⊂options ◊ →ltounge_is_remaining_options
+    ltounge_is_next_argument:
+      ARGS∆PARSE_TOUNGE arguments
+    ltounge_is_remaining_options:
+    →lswitch_end
+  lborg_mode:
+    ARGS∆eyes←"=="
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  ldead:
+    ARGS∆eyes←"XX" ◊ ARGS∆tounge←"U "
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  lgreedy:
+    ARGS∆eyes←"$$"
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  lparanoid:
+    ARGS∆eyes←"@@"
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  lstoned:
+    ARGS∆eyes←"**" ◊ ARGS∆tounge←"U "
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  ltired:
+    ARGS∆eyes←"--"
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  lwired:
+    ARGS∆eyes←"OO"
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
+  lyouthful:
+    ARGS∆eyes←".."
+    arguments ARGS∆PARSE_OPTIONS options ◊ →lswitch_end
   lswitch_end:
+
+lend:
 ∇
 
-⍝ Parses command line arguments and updates ARGS∆* accordingly.
-⍝ →arguments: vector<string>
-∇ARGS∆PARSE_ARGS arguments; invalid_option
-  ⍝ ⎕ARG looks like "apl --script <script> -- [user arguments...]"
+⍝ Argument parser argument state.
+⍝ →arguments: vector<string> - remaining command line arguments.
+∇ARGS∆PARSE_ARGUMENT arguments; argument
+  →(0≡≢arguments) ⍴ lend
+  argument←↑arguments
+  arguments←1↓arguments
 
-  ARGS∆apl_path←↑arguments[1]
-  ARGS∆program_name←↑arguments[3]
-  →(4≥≢arguments) ⍴ lno_arguments
-    ARGS∆PARSE_ARG¨ 4↓arguments
-  lno_arguments:
-
-  ⍝ Tests for any options with arguments that were not supplied an argument.
-  →(~∨/ARGS∆expect_width ARGS∆expect_eyes ARGS∆expect_tounge) ⍴ lno_invalid_options
-  →ARGS∆expect_width ARGS∆expect_eyes ARGS∆expect_tounge / lset_width lset_eyes lset_tounge
-  lset_width:  invalid_option←"W" ◊ →lswitch_end
-  lset_eyes:   invalid_option←"e" ◊ →lswitch_end
-  lset_tounge: invalid_option←"T" ◊ →lswitch_end
+  →(0≡≢argument)   ⍴ lempty_argument
+  →("++"≡argument) ⍴ ldouble_plus
+  →('+'≡↑argument) ⍴ loption
+    ⍝ Text.
+    ARGS∆text←ARGS∆text,⊂argument
+    ARGS∆PARSE_ARGUMENT arguments
+    →lswitch_end
+  lempty_argument:
+    ARGS∆PARSE_ARGUMENT arguments
+    →lswitch_end
+  ldouble_plus:
+    ARGS∆text←ARGS∆text,arguments
+    →lswitch_end
+  loption:
+    arguments ARGS∆PARSE_OPTIONS 1↓argument
+    →lswitch_end
   lswitch_end:
-    ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: expected argument for option for option '+%s'\n" invalid_option
+
+lend:
+∇
+
+⍝ Recursively parses command line arguments with a finite state machine and
+⍝ updates ARGS∆* accordingly.
+⍝ →arguments: vector<string>.
+∇ARGS∆PARSE_ARGUMENTS arguments; invalid_option
+  ⍝ arguments looks like "apl --script <script> -- [user arguments...]"
+  ARGS∆apl_path←↑arguments
+  ARGS∆program_name←↑arguments[3]
+  →(4≤≢arguments) ⍴ lsufficient_arguments
+    ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: insufficient arguments\n"
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
-  lno_invalid_options:
+  lsufficient_arguments:
+
+  →(4≥≢arguments) ⍴ lno_arguments
+    ARGS∆PARSE_ARGUMENT 4↓arguments
+  lno_arguments:
 ∇
 
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
@@ -238,7 +313,7 @@ SLICE_TEXT←{↑⍪/ ⍺{⍺{⍵⍴⍨⍺,⍨⍺÷⍨≢⍵}⍵,' '/⍨⍺{⍵-
 BUBBLIFY←{(2⌷⍴⍵){⍺{('/¯',(⍺/'¯'),'¯\')⍪⍵⍪'\_',(⍺/'_'),'_/'}⍵{(⍵⍴'| '),⍺,⍵⍴' |'}2,⍨↑⍴⍵}⍵}
 
 ∇MAIN; text;width
-  ARGS∆PARSE_ARGS ⎕ARG
+  ARGS∆PARSE_ARGUMENTS ⎕ARG
 
   ⍝ Gets the text to go in text bubble, resulting in a vector of character
   ⍝ vectors, with each subvector being a line of text.
