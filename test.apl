@@ -20,75 +20,52 @@
 
 ⊣ ⍎")COPY_ONCE fio.apl"
 
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+⍝ Configuration                                                                ⍝
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
+ARGS∆SOURCES_FOLDER←"tests/sources"
+ARGS∆OUTPUTS_FOLDER←"tests/outputs"
+
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
+⍝ Argument Parsing                                                             ⍝
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝ The path to the apl interpreter used to call this program.
 ARGS∆APL_PATH←⍬
 ⍝ The name of this file/program.
 ARGS∆PROGRAM_NAME←⍬
 ⍝ The action/subcommand to preform.
-ARGS∆ACTION←⍬
-⍝ The path of the sources folder.
-ARGS∆SOURCES_FOLDER←⍬
-⍝ The paths of the files in the sources folder.
-ARGS∆SOURCES_FILENAMES←⍬
-⍝ The name of the outputs folder.
-ARGS∆OUTPUTS_FOLDER←⍬
+ARGS∆ACTION←"test"
 
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
   ⍞←"Usages:\n"
-  ⍞←"  ",ARGS∆PROGRAM_NAME," -- (record|test) SOURCES OUTPUTS\n"
-  ⍞←"  ",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- (record|test) SOURCES OUTPUTS\n"
+  ⍞←"  ",ARGS∆PROGRAM_NAME," -- [record]\n"
+  ⍞←"  ",ARGS∆APL_PATH," --script ",ARGS∆PROGRAM_NAME," -- [record]\n"
   ⍞←"\n"
-  ⍞←"Subcommand record:\n"
-  ⍞←"  Run cowsAyPL on the files in the SOURCES directory and record the output into\n"
-  ⍞←"  files in the OUTPUTS directory, overwriting existing files.\n"
+  ⍞←"Runs integration testing for cowsAyPL.\n"
   ⍞←"\n"
-  ⍞←"  Note that the OUTPUTS directory will not be created if it doesn't exist.\n"
-  ⍞←"\n"
-  ⍞←"Subcommand test:\n"
-  ⍞←"  Run cowsAyPL on the files in the SOURCES directory compare their output to\n"
-  ⍞←"  files created by record in the OUTPUTS directory. If the outputs differ,\n"
-  ⍞←"  error message will be printed out on stderr. I couldn't get exit error codes\n"
-  ⍞←"  working right (GNU APL amirite?,) so some external logic will be required.\n"
-  ⍞←"\n"
-  ⍞←"Note: this tool will not recurse through directories, so all files must be at\n"
-  ⍞←"the top-level of the supplied directories."
+  ⍞←"If 'record' is specified, this will instead regnerate test cases.\n"
 ∇
 
 ⍝ Parses command line arguments and updates ARGS∆* accordingly.
 ∇ARGS∆PARSE_ARGS ARGUMENTS
   ⍝ ARGUMENTS looks like "<apl path> --script <script> -- [user arguments...]"
 
-  ARGS∆APL_PATH←↑ARGUMENTS[1]
+  ARGS∆APL_PATH←↑ARGUMENTS
   ARGS∆PROGRAM_NAME←↑ARGUMENTS[3]
 
   ⍝ 4 for APL and it's arguments.
-  ⍝ 3 for user arguments.
-  →((3+4)≤≢ARGUMENTS) ⍴ LSUFFICIENT_ARGUMENTS
+  →(4≤≢ARGUMENTS) ⍴ LSUFFICIENT_ARGUMENTS
     ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: insufficient arguments\n"
     ARGS∆DISPLAY_HELP
     ⍎")OFF 1"
   LSUFFICIENT_ARGUMENTS:
 
-  ARGS∆ACTION←↑ARGUMENTS[5]
-  ARGS∆SOURCES_FOLDER←↑ARGUMENTS[6]
-  ARGS∆OUTPUTS_FOLDER←↑ARGUMENTS[7]
-
-  →((⊂ARGS∆ACTION)∊"record" "test") ⍴ LVALID_ACTION
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: invalid action '%s'\n" ARGS∆ACTION
-    ARGS∆DISPLAY_HELP
-    ⍎")OFF 1"
-  LVALID_ACTION:
-
-  ⍝ Checks if sources folder exists and gets filenames.
-  ARGS∆SOURCES_FILENAMES←FIO∆LIST_DIRECTORY ARGS∆SOURCES_FOLDER
-  →(↑ARGS∆SOURCES_FILENAMES) ⍴ LSOURCES_FOLDER_EXISTS
-    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: sources folder '%s' does not exist\n" ARGS∆SOURCES_FOLDER
-    ⍎")OFF 1"
-  LSOURCES_FOLDER_EXISTS:
-  ARGS∆SOURCES_FILENAMES←↑1↓ARGS∆SOURCES_FILENAMES
+  →(~ARGUMENTS∊⍨⊂"record") ⍴ LTEST
+    ARGS∆ACTION←"record"
+  LTEST:
 ∇
 
 
@@ -125,7 +102,7 @@ ARGS∆OUTPUTS_FOLDER←⍬
   OUTPUT←∊(OUTPUT,⍨⊂" ")[1+(⍳⍨OUTPUT)×~OUTPUT∊"\n"]
 ∇
 
-
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 
 ⍝ Opens, truncates, and writes data to a file.
 ⍝ →FILE_PATH - the file.
@@ -392,26 +369,26 @@ LFAILED:
 
 
 
-∇MAIN
+∇MAIN; SOURCE_FILES
   ARGS∆PARSE_ARGS ⎕ARG
+
+  ⍝ Reads list of source files.
+  SOURCE_FILES←FIO∆LIST_DIRECTORY ARGS∆SOURCES_FOLDER
+  →(↑SOURCE_FILES) ⍴ LSOURCES_FOLDER_EXISTS
+    ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: sources folder '%s' does not exist\n" ARGS∆SOURCES_FOLDER
+    ⍎")OFF 1"
+  LSOURCES_FOLDER_EXISTS:
+  SOURCE_FILES←↑1↓SOURCE_FILES
 
   →((⊂ARGS∆ACTION)⍷"record" "test") / LRECORD LTEST
     ⊣ FIO∆STDERR FIO∆PRINT_FD "ERROR: MAIN: unreachable\n"
     ⍎")OFF 1"
   LRECORD:
-    ⍝ TODO check status.
-    ⊣ 7 5 5 FIO∆MAKE_DIRECTORIES ARGS∆OUTPUTS_FOLDER
-
-    RECORD¨ARGS∆SOURCES_FILENAMES
+    RECORD¨SOURCE_FILES
     ⍞←"Recording complete\n"
     →LSWITCH_END
   LTEST:
-    →(↑FIO∆LIST_DIRECTORY ARGS∆OUTPUTS_FOLDER) ⍴ LOUTPUTS_DIRECTORY_EXISTS
-      ⊣ FIO∆STDERR FIO∆PRINTF_FD "ERROR: outputs folder '%s' does not exist\n" ARGS∆OUTPUTS_FOLDER
-      ⍎")OFF 1"
-    LOUTPUTS_DIRECTORY_EXISTS:
-
-    TEST¨ARGS∆SOURCES_FILENAMES
+    TEST¨SOURCE_FILES
     ⍞←PASSED_TEST_COUNT ◊ ⍞←"/" ◊ ⍞←TEST_COUNT ◊ ⍞←" tests passed - "
     →(PASSED_TEST_COUNT≡TEST_COUNT) ⍴ LALL_TESTS_PASSED
       ⍞←"FAIL\n" ◊ →LTESTS_FAILED
