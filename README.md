@@ -75,14 +75,14 @@
 |                                                              |
 | Then, run one of the following commands:                     |
 |                                                              |
-| ./test.apl -- test tests/sources tests/outputs               |
-| apl --script test.apl -- test tests/sources tests/outputs    |
+| ./test.apl --                                                |
+| apl --script test.apl --                                     |
 |                                                              |
 | If breaking changes are desired, regenerate the test cases w |
 | ith one of the following commands:                           |
 |                                                              |
-| ./test.apl -- record tests/sources tests/outputs             |
-| apl --script test.apl -- record tests/sources tests/outputs  |
+| ./test.apl -- record                                         |
+| apl --script test.apl -- record                              |
 \______________________________________________________________/
                                                             \
                                                              \
