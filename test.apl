@@ -315,9 +315,9 @@ lfailed:
     TEST_FILE¨source_files
     ⍞←passed_test_count ◊ ⍞←"/" ◊ ⍞←test_count ◊ ⍞←" tests passed - "
     →(passed_test_count≡test_count) ⍴ lall_tests_passed
-      ⍞←"FAIL\n" ◊ →ltests_failed
-    lall_tests_passed: ⍞←"OK\n"
-    ltests_failed:
+      ⍞←"FAIL\n" ◊ ⍎")OFF 1"
+    lall_tests_passed:
+    ⍞←"OK\n" ◊ ⍎")OFF"
     →lswitch_end
   lswitch_end:
 ∇
