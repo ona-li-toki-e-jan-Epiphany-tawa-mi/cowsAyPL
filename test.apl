@@ -91,8 +91,12 @@ test_cases←test_cases,⊂"+y" "+W" "30"
 test_cases←test_cases,⊂"+y" "+n"
 ⍝⍝ Negative.
 test_cases←test_cases,⊂⊂"+"       ⍝ No option.
+test_cases←test_cases,⊂⊂"+W"      ⍝ No width for +W.
+test_cases←test_cases,⊂"+W" "NaN" ⍝ Non-integer for +W.
+test_cases←test_cases,⊂⊂"+e"      ⍝ No eye for +e.
 test_cases←test_cases,⊂"+e" "o"   ⍝ Too little for +e.
 test_cases←test_cases,⊂"+e" "ooo" ⍝ Too much for +e.
+test_cases←test_cases,⊂⊂"+T"      ⍝ No tounge for +T.
 test_cases←test_cases,⊂"+T" "x"   ⍝ Too little for +T.
 test_cases←test_cases,⊂"+T" "xxx" ⍝ Too little for +T.
 
