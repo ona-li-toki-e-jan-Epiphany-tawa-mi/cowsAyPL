@@ -62,8 +62,8 @@ ARGS∆tounge←"  "
 ⍝ Displays help information.
 ∇ARGS∆DISPLAY_HELP
   ⍞←"Usages:\n"
-  ⍞←"  ",ARGS∆program_name," -- [options...] [TEXT...]\n"
-  ⍞←"  ",ARGS∆apl_path," --script ",ARGS∆program_name," -- [options...] [TEXT...]\n"
+  ⍞←"  ",ARGS∆program_name," -- [options...] [++] [TEXT...]\n"
+  ⍞←"  ",ARGS∆apl_path," --script ",ARGS∆program_name," -- [options...] [++] [TEXT...]\n"
   ⍞←"\n"
   ⍞←"Prints out text art of a cow saying the supplied TEXT within a speech bubble. If\n"
   ⍞←"no TEXT is supplied as arguments to the function, it will instead be pulled from\n"

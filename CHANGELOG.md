@@ -3,6 +3,7 @@
 ## Upcoming
 
 - Added error for specifying '+' without an option (like '+h'.)
+- Added note of '++' in help information.
 
 ## 2.0.0
 
