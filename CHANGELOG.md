@@ -1,5 +1,9 @@
 # Changelog
 
+## Upcoming
+
+- Added error for specifying '+' without an option (like '+h'.)
+
 ## 2.0.0
 
 - Updated to fio.apl library.

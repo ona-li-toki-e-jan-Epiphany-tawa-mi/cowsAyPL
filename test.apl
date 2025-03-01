@@ -92,6 +92,7 @@ test_cases←test_cases,⊂⊂"+y"
 test_cases←test_cases,⊂"+y" "+W" "10"
 test_cases←test_cases,⊂"+y" "+W" "30"
 test_cases←test_cases,⊂"+y" "+n"
+test_cases←test_cases,⊂⊂"+"
 
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 ⍝ Argument Parsing                                                             ⍝

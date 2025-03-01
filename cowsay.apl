@@ -296,6 +296,11 @@ lend:
     ARGS∆text←ARGS∆text,arguments
     →lswitch_end
   loption:
+    →(1≤≢argument) ⍴ lnon_empty_option
+      ⊣ FIO∆stderr FIO∆PRINT_FD "ERROR: + specified without option. Did you forget to put '++'?\n"
+      ARGS∆DISPLAY_SHORT_HELP
+      ⊣ ⍎")OFF 1"
+    lnon_empty_option:
     arguments ARGS∆PARSE_OPTIONS 1↓argument
     →lswitch_end
   lswitch_end:
