@@ -37,6 +37,7 @@ output_folder←"tests/outputs"
 ⍝ run cowsAyPL with.
 ⍝ Type: vector<vector<string>>
 test_cases←⊂⍬
+⍝⍝ Positive.
 test_cases←test_cases,⊂"+W" "10"
 test_cases←test_cases,⊂"+W" "30"
 test_cases←test_cases,⊂⊂"+n"
@@ -48,8 +49,6 @@ test_cases←test_cases,⊂"+e" "!q"
 test_cases←test_cases,⊂"+e" "!q" "+W" "10"
 test_cases←test_cases,⊂"+e" "!q" "+W" "20"
 test_cases←test_cases,⊂"+e" "!q" "+n"
-test_cases←test_cases,⊂"+e" "o"
-test_cases←test_cases,⊂"+e" "ooo"
 test_cases←test_cases,⊂"+T" "__"
 test_cases←test_cases,⊂"+T" "__" "+W" "10"
 test_cases←test_cases,⊂"+T" "__" "+W" "20"
@@ -58,8 +57,6 @@ test_cases←test_cases,⊂"+T" " 0"
 test_cases←test_cases,⊂"+T" " 0" "+W" "10"
 test_cases←test_cases,⊂"+T" " 0" "+W" "20"
 test_cases←test_cases,⊂"+T" " 0" "+n"
-test_cases←test_cases,⊂"+T" "x"
-test_cases←test_cases,⊂"+T" "xxx"
 test_cases←test_cases,⊂⊂"+b"
 test_cases←test_cases,⊂"+b" "+W" "10"
 test_cases←test_cases,⊂"+b" "+W" "30"
@@ -92,7 +89,12 @@ test_cases←test_cases,⊂⊂"+y"
 test_cases←test_cases,⊂"+y" "+W" "10"
 test_cases←test_cases,⊂"+y" "+W" "30"
 test_cases←test_cases,⊂"+y" "+n"
-test_cases←test_cases,⊂⊂"+"
+⍝⍝ Negative.
+test_cases←test_cases,⊂⊂"+"       ⍝ No option.
+test_cases←test_cases,⊂"+e" "o"   ⍝ Too little for +e.
+test_cases←test_cases,⊂"+e" "ooo" ⍝ Too much for +e.
+test_cases←test_cases,⊂"+T" "x"   ⍝ Too little for +T.
+test_cases←test_cases,⊂"+T" "xxx" ⍝ Too little for +T.
 
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝
 ⍝ Argument Parsing                                                             ⍝
