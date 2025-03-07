@@ -20,18 +20,15 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs }:
-    let inherit (nixpkgs.lib) systems genAttrs;
+    let
+      inherit (nixpkgs.lib) systems genAttrs;
 
-        forAllSystems = f: genAttrs systems.flakeExposed (system: f {
-          pkgs = import nixpkgs { inherit system; };
-        });
+      forAllSystems = f:
+        genAttrs systems.flakeExposed
+        (system: f { pkgs = import nixpkgs { inherit system; }; });
     in {
       devShells = forAllSystems ({ pkgs }: {
-        default = with pkgs; mkShell {
-          packages = [
-            gnuapl
-          ];
-        };
+        default = with pkgs; mkShell { packages = [ gnuapl ]; };
       });
     };
 }
