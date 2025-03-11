@@ -195,13 +195,13 @@ ARGS∆tounge←"  "
   argument←↑arguments
   arguments←1↓arguments
 
-  →(2≡≢argument) ⍴ lvalid_tounge
+  →(2≥≢argument) ⍴ lvalid_tounge
     ⊣ FIO∆stderr FIO∆PRINTF_FD "ERROR: invalid argument '%s' for option +T: expected a string of length 2\n" argument
     ARGS∆DISPLAY_SHORT_HELP
     ⍎")OFF 1"
   lvalid_tounge:
 
-  ARGS∆tounge←argument
+  ARGS∆tounge←argument," "⍴⍨1≡≢argument
   ARGS∆PARSE_ARGUMENT arguments
 ∇
 

@@ -4,6 +4,7 @@
 
 - Added error for specifying '+' without an option (like '+h'.)
 - Added note of '++' in help information.
+- Fixed introduced bug with +T not working with a single character argument.
 
 ## 2.0.0
 
