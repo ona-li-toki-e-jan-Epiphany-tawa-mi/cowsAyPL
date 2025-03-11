@@ -6,6 +6,7 @@
 - Added note of '++' in help information.
 - Fixed introduced bug with +T not working with a single character argument.
 - Fixed error on insufficient arguments.
+- Removed extra newline on output.
 
 ## 2.0.0
 
